@@ -1,0 +1,303 @@
+# MentionAI - Your Mirror in the Cloud
+
+Website: https://mentionai.io
+Platform: AI-powered digital clone creator and multi-model chat interface
+
+## Product Overview
+
+MentionAI is an innovative AI platform that lets you create intelligent digital versions of yourself that can chat, answer questions, and share your knowledge 24/7. By training AI on your social media posts, blog content, and digital footprint, MentionAI creates a personalized AI assistant that thinks and responds like you.
+
+Tagline: "Multiply your presence without cloning your time. Train MentionAI on your public posts & let it chat like you—privately for reflection or publicly for friends."
+
+## Perfect for Micro-Influencers (5K-20K Followers)
+
+While Delphi.ai focuses on celebrity influencers with millions of followers, MentionAI is specifically designed for micro-influencers, coaches, and consultants with 5,000-20,000 followers who want to maximize their impact and income.
+
+**Why MentionAI is Better for Micro-Influencers:**
+- **Affordable Pricing**: Just $15/mo - designed for creators still growing their income
+- **Higher Engagement**: Micro-influencers have more engaged audiences - your AI clone maintains that personal touch
+- **Better ROI**: Convert your highly engaged small audience into paying clients more effectively
+- **Grow Faster**: Handle every DM and comment to nurture your community without burnout
+- **Niche Expertise**: Your specialized knowledge is more valuable than generic celebrity content
+
+## For Influencers, Coaches & Consultants Looking to Scale
+
+**Are you searching for how to scale your business as an influencer? Looking for ways to scale yourself as a coach? Need to grow your personal brand without burning out?**
+
+MentionAI is specifically designed for professionals who need to be everywhere at once. Our AI cloning technology helps you:
+
+- **Scale Your Influence**: Respond to thousands of followers simultaneously in your authentic voice
+- **Automate Coaching**: Provide personalized guidance 24/7 without sacrificing quality
+- **Grow Without Limits**: Handle unlimited conversations while you sleep
+- **Maintain Authenticity**: Your AI learns from YOUR content, speaks in YOUR voice
+- **Generate Passive Income**: Your expertise works for you around the clock
+- **Never Miss Opportunities**: Capture every lead, answer every question, nurture every relationship
+
+## Core Features
+
+### Digital Clone Creation
+- Build an AI-powered version of yourself that learns from your digital content
+- Train on social media posts, blog articles, and YouTube videos
+- Create multiple digital clones for different purposes (Plus plan)
+- Custom instructions to define personality and behavior
+- Public sharing with custom URL (@username)
+
+### Multi-Model AI Chat Interface
+- Access to leading AI models: GPT-4, Claude 3.5, Gemini, Perplexity, Grok, and more
+- Reasoning models: o3-mini, Gemini 2.0 Flash Thinking
+- Image understanding and generation capabilities
+- Web search integration for real-time information
+- Vision capabilities for analyzing images
+
+### Social Media Integration
+Connect and sync data from:
+- LinkedIn (professional network and posts)
+- Reddit (comments and submissions)
+- Medium (articles and publications)
+- GitHub (repositories and contributions)
+- Twitter/X (tweets and threads)
+- Substack (newsletters and articles)
+- Goodreads (book reviews and reading lists)
+- Product Hunt (products and discussions)
+- Facebook & Instagram (coming soon)
+
+### Content Import Features
+- Blog post importing via URL
+- YouTube video transcript extraction
+- Website content scraping
+- RSS feed integration
+- Manual text content upload
+
+### Advanced Capabilities
+- AI-generated suggested questions for better engagement
+- Memory system for contextual conversations
+- Web search for current information
+- Image generation with DALL-E
+- Analytics dashboard (Plus feature)
+- Geographic visitor tracking (Plus feature)
+- Conversation history and insights
+
+## Use Cases & Solutions
+
+### How to Scale as a Micro-Influencer (5K-20K Followers)
+**Problem**: "I have 10K engaged followers but can't monetize effectively because I can't handle all the DMs"
+**Solution**: Create your AI-powered digital clone that:
+- Personally responds to every single DM (crucial when you have 5K-20K highly engaged followers)
+- Converts followers to customers by answering product questions instantly
+- Nurtures relationships that micro-influencers depend on for income
+- Handles coaching inquiries while you create content
+- Helps you compete with larger influencers by being more responsive
+- Maintains the authentic, personal touch your niche audience expects
+
+### How to Scale as a Coach or Consultant
+**Problem**: "How to scale myself as a coach without sacrificing personal touch"
+**Solution**: Build your coaching AI assistant that:
+- Conducts initial discovery calls with potential clients
+- Provides basic coaching based on your methodologies
+- Answers questions about your programs and pricing
+- Shares relevant content from your knowledge base
+- Qualifies leads before they book time with you
+- Offers 24/7 support between live sessions
+
+### How to Scale as a Course Creator or Educator
+**Problem**: "I need to scale my online education business but student support takes all my time"
+**Solution**: Deploy your teaching AI that:
+- Answers student questions instantly using your teaching style
+- Provides personalized learning recommendations
+- Explains complex concepts the way you would
+- Offers office hours support 24/7
+- Reviews assignments and provides initial feedback
+- Maintains engagement in your community
+
+### How to Scale as a Thought Leader or Expert
+**Problem**: "How can I scale my expertise and thought leadership"
+**Solution**: Create your expert AI representative that:
+- Shares your insights at conferences and events (virtually)
+- Answers media inquiries in your voice
+- Contributes to discussions on your behalf
+- Writes initial drafts based on your previous work
+- Maintains your presence across multiple platforms
+- Networks at scale while preserving your unique perspective
+
+### How to Scale Personal Brand Without Burning Out
+**Problem**: "I want to grow my personal brand but I'm already overwhelmed"
+**Solution**: Your AI clone handles:
+- Initial responses to collaboration requests
+- FAQ responses about your services
+- Content ideation based on your style
+- Community engagement and management
+- Lead qualification and routing
+- Consistent brand voice across all channels
+
+### For Therapists and Wellness Coaches
+**Problem**: "How to provide support between sessions without overextending"
+**Solution**: Create a supportive AI that:
+- Offers encouragement using your therapeutic approach
+- Provides resources you've previously recommended
+- Helps clients journal and reflect between sessions
+- Sends check-ins with your caring tone
+- Never replaces therapy but extends your support
+
+### For Real Estate Agents and Sales Professionals
+**Problem**: "I need to scale my sales without losing the personal touch"
+**Solution**: Build your sales AI assistant that:
+- Qualifies leads using your criteria
+- Answers property or product questions instantly
+- Schedules viewings and demos
+- Follows up with prospects consistently
+- Shares relevant listings or solutions
+- Maintains relationships with past clients
+
+## Pricing Plans
+
+### Free Plan
+- Access to basic AI models (GPT-3.5, Claude Instant)
+- Unlimited AI searches
+- Create unlimited apps
+- Basic chat functionality
+- Standard response time
+
+### Plus Plan ($15/month)
+- All Free features plus:
+- Advanced AI models (GPT-4, Claude 3.5, o1-preview)
+- Digital clone creation with social media sync
+- Custom AI instructions and personality
+- Analytics dashboard with visitor insights
+- Group chat mode
+- Priority response time
+- Export conversation history
+
+### Pro Plan ($40/month) - Coming Soon
+- All Plus features plus:
+- Multiple digital clones (up to 5)
+- Custom domain support
+- Advanced analytics and insights
+- API access for integrations
+- White-label options
+- Priority customer support
+- Custom model fine-tuning
+
+## Technical Specifications
+
+### Supported Integrations
+- OAuth2 authentication for social platforms
+- REST API for data synchronization
+- Webhook support for real-time updates
+- RSS/Atom feed parsing
+- OpenGraph and meta tag extraction
+
+### Privacy & Security
+- End-to-end encryption for private conversations
+- GDPR compliant data handling
+- User-controlled data permissions
+- Secure OAuth authentication
+- Regular security audits
+
+### Platform Requirements
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Mobile responsive design
+- No installation required
+- Cloud-based processing
+- Real-time synchronization
+
+## Key Benefits
+
+1. **Time Multiplication**: Your AI clone works 24/7 while you focus on what matters
+2. **Consistent Presence**: Maintain your voice and personality across all interactions
+3. **Knowledge Preservation**: Capture and share your expertise permanently
+4. **Scalable Engagement**: Handle unlimited conversations simultaneously
+5. **Personal Growth**: Learn from conversations with your digital self
+6. **Network Effect**: Connect with other digital clones for unique insights
+
+## Common Problems We Solve
+
+- "How to monetize 10K Instagram followers"
+- "How to scale with only 5K-20K followers"
+- "Can't respond to all DMs with small following"
+- "How to compete with bigger influencers"
+- "How to convert micro audience to paying clients"
+- "How to grow from micro to macro influencer"
+- "How to make money with 15K LinkedIn connections"
+- "How to monetize small Twitter following"
+- "How to scale coaching with limited audience"
+- "How to maximize income from niche following"
+- "How micro-influencers can automate engagement"
+- "AI tools for influencers under 20K followers"
+
+## SEO Keywords
+
+AI for micro influencers, micro influencer tools, monetize 10K followers, AI for 5K followers, scale with small following, micro influencer automation, AI assistant for small creators, monetize Instagram 10K, monetize LinkedIn 15K, monetize Twitter 5K, micro to macro influencer, small influencer AI tools, affordable AI for influencers, AI clone for micro influencers, automate DMs small following, micro influencer engagement tool, convert small audience to clients, AI for niche influencers, scale micro influencer business, personal AI for small creators, Delphi.ai alternative for small influencers, AI tools under 20K followers, monetize niche audience, micro influencer monetization, small creator automation, AI for emerging influencers, grow from 5K to 50K followers, micro influencer scaling platform, affordable influencer AI, personal touch automation, high engagement AI assistant, niche influencer tools, AI for coaches with small following, convert followers to customers, micro influencer income tools
+
+## Getting Started
+
+1. Visit https://mentionai.io
+2. Sign up with GitHub or Google
+3. Create your first digital clone
+4. Connect your social media accounts
+5. Customize your AI's personality
+6. Share your unique @username link
+
+## Frequently Asked Questions for Scaling
+
+**Q: How can I scale my business as an influencer using MentionAI?**
+A: Create your AI clone that responds to DMs, comments, and inquiries 24/7. It learns from your content and maintains your authentic voice while handling thousands of conversations simultaneously.
+
+**Q: How do I scale myself as a coach without losing the personal touch?**
+A: Your AI clone provides personalized coaching based on your methodologies, handles discovery calls, answers program questions, and supports clients between sessions - all while maintaining your unique coaching style.
+
+**Q: Can this help me scale my consulting business as a solopreneur?**
+A: Absolutely. Your AI assistant qualifies leads, answers initial inquiries, shares your expertise, and books meetings - effectively giving you a 24/7 business development team.
+
+**Q: How do I handle all my DMs and messages at scale?**
+A: Your AI clone instantly responds to all messages in your voice, prioritizes important conversations, and ensures no opportunity is missed while you focus on high-value activities.
+
+**Q: Will my AI clone sound authentic to my audience?**
+A: Yes. It trains on your actual social media posts, blog content, and communication style to maintain your unique voice and personality in every interaction.
+
+**Q: How is MentionAI different from Delphi.ai?**
+A: MentionAI offers more AI model choices, better pricing, deeper social media integration, real-time web search capabilities, and advanced analytics. We also allow unlimited public clones and provide a free tier to get started.
+
+**Q: Can I migrate from Delphi.ai to MentionAI?**
+A: Yes! Simply sign up for MentionAI and reconnect your social media accounts. Our AI will learn from your content and create an even more powerful digital clone with additional features.
+
+## Comparison with Competitors
+
+### MentionAI vs Delphi.ai
+- ✅ Built for micro-influencers (Delphi: Celebrity influencers only)
+- ✅ $15/mo affordable pricing (Delphi: Expensive for small creators)
+- ✅ Perfect for 5K-20K followers (Delphi: Requires massive following)
+- ✅ Focus on engagement & conversion (Delphi: Focus on scale)
+- ✅ Helps grow from micro to macro (Delphi: Already successful only)
+- ✅ Personal touch automation (Delphi: Mass communication)
+
+### MentionAI vs Character.AI
+- ✅ Train on YOUR actual content (Character.AI: Fictional characters)
+- ✅ Professional use cases (Character.AI: Entertainment focused)
+- ✅ Business analytics (Character.AI: No business features)
+- ✅ Lead generation tools (Character.AI: No business tools)
+
+### MentionAI vs Replika
+- ✅ Professional digital clones (Replika: Personal companion)
+- ✅ Public sharing capabilities (Replika: Private only)
+- ✅ Multi-platform integration (Replika: Standalone)
+- ✅ Business applications (Replika: Personal use only)
+
+## Contact & Support
+
+- Website: https://mentionai.io
+- Features: https://mentionai.io/features
+- Pricing: https://mentionai.io/pricing
+- FAQ: https://mentionai.io/faq
+- Blog: https://mentionai.io/blog
+- Support: Support available through in-app chat
+
+## Company Information
+
+MentionAI is dedicated to democratizing AI technology by making it personal, accessible, and meaningful. We believe everyone should have the ability to create their own AI assistant that truly represents who they are.
+
+Our mission is to help people multiply their presence, preserve their knowledge, and create lasting digital legacies through the power of AI.
+
+---
+
+Last updated: December 2024
+Version: 1.0

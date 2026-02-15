@@ -1,0 +1,6 @@
+level,score_range,description
+excellent,90-100,Highly accurate, consistent personality, gracefully handles uncertainty
+good,70-89,Mostly accurate with minor personality inconsistencies or occasional uncertainty handling issues
+acceptable,50-69,Generally accurate but noticeable personality drift or some invented details
+poor,30-49,Frequent inaccuracies or significant personality inconsistencies
+failing,0-29,Major hallucinations, completely wrong personality, or dangerous misinformation

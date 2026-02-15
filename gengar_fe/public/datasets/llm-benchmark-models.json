@@ -1,0 +1,666 @@
+{
+  "openai_models": [
+    {
+      "name": "GPT-4.1",
+      "description": "Advanced multimodal model with enhanced reasoning capabilities",
+      "context_length": "1000000",
+      "price_input_per_1M": "2.00",
+      "price_output_per_1M": "8.00",
+      "benchmarks": {
+        "MMLU": "90.2%",
+        "GPQA": "66.3%",
+        "MMMU": "74.8%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "Moderate",
+        "supports_input": ["text", "image", "audio", "video"],
+        "supports_output": ["text", "image"],
+        "reasoning_tokens": true,
+        "knowledge_cutoff": "Jun 2024"
+      }
+    },
+    {
+      "name": "GPT-4.1 mini",
+      "description": "Compact version of GPT-4.1 with strong performance",
+      "context_length": "1000000",
+      "price_input_per_1M": "0.40",
+      "price_output_per_1M": "1.60",
+      "benchmarks": {
+        "MMLU": "87.5%",
+        "GPQA": "65%",
+        "MMMU": "72.7%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "High",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Jun 2024"
+      }
+    },
+    {
+      "name": "GPT-4.1 nano",
+      "description": "Lightweight version of GPT-4.1 for efficient tasks",
+      "context_length": "1000000",
+      "price_input_per_1M": "0.10",
+      "price_output_per_1M": "0.40",
+      "benchmarks": {
+        "MMLU": "80.1%",
+        "GPQA": "50.3%",
+        "MMMU": "55.4%"
+      },
+      "additional_features": {
+        "reasoning": "Low",
+        "speed": "Very High",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Jun 2024"
+      }
+    },
+    {
+      "name": "Llama 3.2 90B",
+      "description": "Open-weight model optimized for research and performance",
+      "context_length": "128000",
+      "price_input_per_1M": "0.35",
+      "price_output_per_1M": "0.35",
+      "benchmarks": {
+        "MMLU": "86%",
+        "GPQA": "46.7%",
+        "MMMU": "60.3%",
+        "GSM8K": "86.9%",
+        "MATH": "68%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "Moderate",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Dec 2023"
+      }
+    },
+    {
+      "name": "Llama 3.3 70B",
+      "description": "Open-weight model with strong math and coding capabilities",
+      "context_length": "128000",
+      "price_input_per_1M": "0.23",
+      "price_output_per_1M": "0.40",
+      "benchmarks": {
+        "MMLU": "86%",
+        "GPQA": "50.5%",
+        "HumanEval": "88.4%",
+        "MATH": "77%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "Moderate",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Dec 2023"
+      }
+    },
+    {
+      "name": "Gemini 2.5 Pro",
+      "description": "Advanced multimodal model with high performance",
+      "context_length": "1048576",
+      "price_input_per_1M": "1.25",
+      "price_output_per_1M": "10.00",
+      "benchmarks": {
+        "MMLU": "89.8%",
+        "GPQA": "84%",
+        "MMMU": "81.7%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "Moderate",
+        "supports_input": ["text", "image", "audio", "video"],
+        "supports_output": ["text", "image"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Jan 2025"
+      }
+    },
+    {
+      "name": "Llama 4 Scout",
+      "description": "Cost-effective open-weight model for general tasks",
+      "context_length": "10000000",
+      "price_input_per_1M": "0.30",
+      "price_output_per_1M": "0.30",
+      "benchmarks": {
+        "MMLU": "74.3%",
+        "GPQA": "57.2%",
+        "MMMU": "69.4%"
+      },
+      "additional_features": {
+        "reasoning": "Low",
+        "speed": "High",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Aug 2024"
+      }
+    },
+    {
+      "name": "Llama 4 Maverick",
+      "description": "Enhanced open-weight model for complex tasks",
+      "context_length": "1000000",
+      "price_input_per_1M": "0.20",
+      "price_output_per_1M": "0.82",
+      "benchmarks": {
+        "MMLU": "84.6%",
+        "GPQA": "69.8%",
+        "MMMU": "73.4%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "Moderate",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Aug 2024"
+      }
+    },
+    {
+      "name": "Grok 3",
+      "description": "High-performance model by xAI for reasoning and multimodal tasks",
+      "context_length": "1000000",
+      "price_input_per_1M": "3.00",
+      "price_output_per_1M": "15.00",
+      "benchmarks": {
+        "GPQA": "75.4%",
+        "MMMU": "73.2%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "Moderate",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": true,
+        "knowledge_cutoff": "April 2025"
+      }
+    },
+    {
+      "name": "Grok-2",
+      "description": "Previous version of Grok with strong performance",
+      "context_length": "128000",
+      "price_input_per_1M": "2.00",
+      "price_output_per_1M": "10.00",
+      "benchmarks": {
+        "MMLU": "87.5%",
+        "GPQA": "56%",
+        "MMMU": "66.1%",
+        "HumanEval": "88.4%",
+        "MATH": "76.1%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "Moderate",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Aug 2024"
+      }
+    },
+    {
+      "name": "Claude 3.7 Sonnet",
+      "description": "Advanced Claude model with high reasoning and math skills",
+      "context_length": "200000",
+      "price_input_per_1M": "3.00",
+      "price_output_per_1M": "15.00",
+      "benchmarks": {
+        "MMLU": "86.1%",
+        "GPQA": "84.8%",
+        "MMMU": "75%",
+        "MATH": "96.2%"
+      },
+      "additional_features": {
+        "reasoning": "Very High",
+        "speed": "Fast",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Oct 2024",
+        "tokens_per_second": "170.4"
+      }
+    },
+    {
+      "name": "Claude 3.7 Sonnet(Normal)",
+      "description": "Standard version of Claude 3.7 Sonnet",
+      "context_length": "200000",
+      "price_input_per_1M": "3.00",
+      "price_output_per_1M": "15.00",
+      "benchmarks": {
+        "MMLU": "83.2%",
+        "GPQA": "68%",
+        "MMMU": "71.8%",
+        "MATH": "82.2%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "Moderate",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Oct 2024"
+      }
+    },
+    {
+      "name": "Deepseek-R1",
+      "description": "High-performance model for reasoning and math",
+      "context_length": "128000",
+      "price_input_per_1M": "3.00",
+      "price_output_per_1M": "7.00",
+      "benchmarks": {
+        "MMLU": "90.8%",
+        "GPQA": "71.5%",
+        "MATH": "97.3%"
+      },
+      "additional_features": {
+        "reasoning": "Very High",
+        "speed": "Moderate",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Jul 2024"
+      }
+    },
+    {
+      "name": "o1",
+      "description": "STEM-optimized reasoning model with high performance",
+      "context_length": "200000",
+      "price_input_per_1M": "15.00",
+      "price_output_per_1M": "60.00",
+      "benchmarks": {
+        "MMLU": "92.3%",
+        "GPQA": "78%",
+        "MATH": "94.8%"
+      },
+      "additional_features": {
+        "reasoning": "Very High",
+        "speed": "Moderate",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": true,
+        "knowledge_cutoff": "Jun 01, 2024"
+      }
+    },
+    {
+      "name": "o1-preview",
+      "description": "Preview version of o1 with strong STEM performance",
+      "context_length": "200000",
+      "price_input_per_1M": "10.00",
+      "price_output_per_1M": "40.00",
+      "benchmarks": {
+        "MMLU": "90.8%",
+        "GPQA": "78.3%",
+        "MATH": "85.5%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "Moderate",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": true,
+        "knowledge_cutoff": "Jun 01, 2024"
+      }
+    },
+    {
+      "name": "o1-mini",
+      "description": "Compact version of o1 for efficient STEM tasks",
+      "context_length": "1047576",
+      "price_input_per_1M": "2.00",
+      "price_output_per_1M": "8.00",
+      "benchmarks": {
+        "MMLU": "85.2%",
+        "GPQA": "60%",
+        "HumanEval": "92.4%",
+        "MATH": "90%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "High",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Jun 01, 2024",
+        "max_output_tokens": "32768"
+      }
+    },
+    {
+      "name": "DeepSeek V3",
+      "description": "Advanced model for coding and math tasks",
+      "context_length": "64000",
+      "price_input_per_1M": "0.27",
+      "price_output_per_1M": "1.10",
+      "benchmarks": {
+        "MMLU": "88.5%",
+        "GPQA": "59.1%",
+        "HumanEval": "82.6%",
+        "MATH": "90.2%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "Moderate",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Jul 2024"
+      }
+    },
+    {
+      "name": "Gemini 2.0 Pro Experimental",
+      "description": "Experimental version of Gemini 2.0 Pro",
+      "context_length": "2000000",
+      "price_input_per_1M": "unknown",
+      "price_output_per_1M": "unknown",
+      "benchmarks": {
+        "MMLU": "79.1%",
+        "GPQA": "64.7%",
+        "MMMU": "72.7%",
+        "MATH": "91.8%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "Moderate",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "unknown"
+      }
+    },
+    {
+      "name": "Gemini 2.0 Flash",
+      "description": "Fast version of Gemini 2.0 for efficient tasks",
+      "context_length": "1000000",
+      "price_input_per_1M": "0.10",
+      "price_output_per_1M": "0.40",
+      "benchmarks": {
+        "MMLU": "87%",
+        "GPQA": "59%",
+        "HumanEval": "91%",
+        "MATH": "90%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "High",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Aug 2024"
+      }
+    },
+    {
+      "name": "Gemini 2.0 Flash",
+      "description": "Fast multimodal model for efficient tasks",
+      "context_length": "1000000",
+      "price_input_per_1M": "0.07",
+      "price_output_per_1M": "0.30",
+      "benchmarks": {
+        "MMLU": "78.9%",
+        "GPQA": "39.5%",
+        "MMMU": "56.1%",
+        "HellaSwag": "81.3%",
+        "HumanEval": "67.5%",
+        "BBHard": "89.2%",
+        "GSM8K": "68.8%",
+        "MATH": "67.7%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "High",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Aug 2024"
+      }
+    },
+    {
+      "name": "Llama 3.1 405b",
+      "description": "Large open-weight model for diverse tasks",
+      "context_length": "128000",
+      "price_input_per_1M": "3.50",
+      "price_output_per_1M": "3.50",
+      "benchmarks": {
+        "MMLU": "88.6%",
+        "GPQA": "51.1%",
+        "MMMU": "64.5%",
+        "HellaSwag": "87%",
+        "HumanEval": "89%",
+        "BBHard": "81.3%",
+        "GSM8K": "96.8%",
+        "MATH": "73.8%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "Moderate",
+        "supports_input": ["text"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Dec 2023"
+      }
+    },
+    {
+      "name": "GPT-4o",
+      "description": "Multimodal model with advanced reasoning and vision support",
+      "context_length": "128000",
+      "price_input_per_1M": "2.50",
+      "price_output_per_1M": "10.00",
+      "benchmarks": {
+        "MMLU": "88.7%",
+        "GPQA": "53.6%",
+        "MMMU": "69.1%",
+        "HellaSwag": "94.2%",
+        "HumanEval": "90.2%",
+        "BBHard": "91.3%",
+        "GSM8K": "89.8%",
+        "MATH": "76.6%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "High",
+        "supports_input": ["text", "image", "audio", "video"],
+        "supports_output": ["text", "image"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Dec 2024",
+        "latency": "0.48s"
+      }
+    },
+    {
+      "name": "GPT-4o mini",
+      "description": "Cost-effective version of GPT-4o for multimodal tasks",
+      "context_length": "128000",
+      "price_input_per_1M": "0.15",
+      "price_output_per_1M": "0.60",
+      "benchmarks": {
+        "MMLU": "82%",
+        "GPQA": "40.2%",
+        "MMMU": "59.4%",
+        "HumanEval": "87.2%",
+        "MATH": "70.2%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "Very High",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Dec 2024"
+      }
+    },
+    {
+      "name": "Claude 3.5 Haiku",
+      "description": "Efficient Claude model for basic tasks",
+      "context_length": "200000",
+      "price_input_per_1M": "0.25",
+      "price_output_per_1M": "1.25",
+      "benchmarks": {
+        "MMLU": "65%",
+        "GPQA": "41.6%",
+        "HumanEval": "88.1%",
+        "MATH": "69.2%"
+      },
+      "additional_features": {
+        "reasoning": "Low",
+        "speed": "Very High",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Apr 2024"
+      }
+    },
+    {
+      "name": "Claude 3 Haiku",
+      "description": "Lightweight Claude model for general use",
+      "context_length": "200000",
+      "price_input_per_1M": "0.25",
+      "price_output_per_1M": "1.25",
+      "benchmarks": {
+        "MMLU": "75.2%",
+        "GPQA": "33.3%",
+        "MMMU": "50.2%",
+        "HellaSwag": "85.9%",
+        "HumanEval": "75.9%",
+        "BBHard": "73.7%",
+        "GSM8K": "88.9%",
+        "MATH": "38.9%"
+      },
+      "additional_features": {
+        "reasoning": "Low",
+        "speed": "Very High",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Apr 2024"
+      }
+    },
+    {
+      "name": "Claude 3 Sonnet",
+      "description": "Balanced Claude model for general tasks",
+      "context_length": "200000",
+      "price_input_per_1M": "3.00",
+      "price_output_per_1M": "15.00",
+      "benchmarks": {
+        "MMLU": "79%",
+        "GPQA": "40.4%",
+        "MMMU": "53.1%",
+        "HellaSwag": "89%",
+        "HumanEval": "73%",
+        "BBHard": "82.9%",
+        "GSM8K": "92.3%",
+        "MATH": "43.1%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "Moderate",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Apr 2024",
+        "tokens_per_second": "170.4"
+      }
+    },
+    {
+      "name": "Claude 3.5 Sonnet",
+      "description": "Enhanced Claude model with strong performance",
+      "context_length": "200000",
+      "price_input_per_1M": "3.00",
+      "price_output_per_1M": "15.00",
+      "benchmarks": {
+        "MMLU": "88.7%",
+        "GPQA": "59.4%",
+        "MMMU": "68.3%",
+        "HellaSwag": "89%",
+        "HumanEval": "92%",
+        "BBHard": "93.1%",
+        "GSM8K": "96.4%",
+        "MATH": "71.1%"
+      },
+      "additional_features": {
+        "reasoning": "High",
+        "speed": "Moderate",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Apr 2024"
+      }
+    },
+    {
+      "name": "Claude 3 Opus",
+      "description": "Top-tier Claude model for complex tasks",
+      "context_length": "200000",
+      "price_input_per_1M": "15.00",
+      "price_output_per_1M": "75.00",
+      "benchmarks": {
+        "MMLU": "86.8%",
+        "GPQA": "50.4%",
+        "MMMU": "59.4%",
+        "HellaSwag": "95.4%",
+        "HumanEval": "84.9%",
+        "BBHard": "86.8%",
+        "GSM8K": "95%",
+        "MATH": "60.1%"
+      },
+      "additional_features": {
+        "reasoning": "Very High",
+        "speed": "Moderate",
+        "supports_input": ["text", "image"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Apr 2024"
+      }
+    },
+    {
+      "name": "Gemini 1.5 Pro",
+      "description": "Multimodal model with large context window",
+      "context_length": "2000000",
+      "price_input_per_1M": "3.50",
+      "price_output_per_1M": "10.50",
+      "benchmarks": {
+        "MMLU": "81.9%",
+        "GPQA": "46.2%",
+        "MMMU": "62.2%",
+        "HellaSwag": "92.5%",
+        "HumanEval": "71.9%",
+        "BBHard": "84%",
+        "GSM8K": "91.7%",
+        "MATH": "58.5%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "Moderate",
+        "supports_input": ["text", "image", "audio", "video"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Dec 2024"
+      }
+    },
+    {
+      "name": "Gemini 1.5 Flash",
+      "description": "Fast multimodal model for efficient tasks",
+      "context_length": "2000000",
+      "price_input_per_1M": "0.35",
+      "price_output_per_1M": "0.70",
+      "benchmarks": {
+        "MMLU": "78.9%",
+        "GPQA": "39.5%",
+        "MMMU": "56.1%",
+        "HellaSwag": "81.3%",
+        "HumanEval": "67.5%",
+        "BBHard": "89.2%",
+        "GSM8K": "68.8%",
+        "MATH": "67.7%"
+      },
+      "additional_features": {
+        "reasoning": "Moderate",
+        "speed": "High",
+        "supports_input": ["text", "image", "audio", "video"],
+        "supports_output": ["text"],
+        "reasoning_tokens": false,
+        "knowledge_cutoff": "Dec 2024"
+      }
+    }
+  ]
+}
