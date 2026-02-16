@@ -1,529 +1,262 @@
-# CLAUDE.md
+# CLAUDE.md - Frontend (gengar_fe)
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with the frontend.
 
-## Development Commands
+## Essential Commands
 
-### Core Development
-
-- `yarn dev` - Start development server on port 4000
-- `yarn dev:https` - Start development server with HTTPS on port 4001 (proxies to 4002)
-- `yarn build` - Build production application
-- `yarn start` - Start production server
-- `yarn lint` - Run ESLint for code quality checks
-- `yarn analyze` - Analyze bundle size with @next/bundle-analyzer
-
-### Installation
-
-- `yarn install` - Install all dependencies
-- `yarn add [package]` - Add new dependency
-- `yarn add -D [package]` - Add new dev dependency
+```bash
+yarn install                    # Install dependencies
+yarn dev                        # Dev server on port 4000
+yarn dev:https                  # Dev server with HTTPS
+yarn build                      # Production build
+yarn start                      # Start production server
+yarn lint                       # ESLint check
+yarn analyze                    # Bundle size analysis (ANALYZE=true)
+```
 
 ## Architecture Overview
 
 ### Tech Stack
 
-- **Frontend**: Next.js 14 with App Router, TypeScript, React 18
-- **UI**: Tailwind CSS with Radix UI components, custom theme system
-- **State Management**: Zustand with persistence
-- **Data Fetching**: TanStack Query (React Query) with Axios
-- **Authentication**: NextAuth.js with GitHub/Google OAuth
-- **Rich Text**: TipTap editor with mentions and autocomplete
-- **Analytics**: PostHog, Vercel Analytics, Google Analytics
-- **Payments**: Stripe integration
+- **Next.js 14**: App Router, TypeScript, React 18
+- **Tailwind CSS**: Custom theme with Radix UI primitives
+- **Shadcn/ui**: Component library (45+ components in `src/components/ui/`)
+- **Zustand**: State management with persistence (6 stores)
+- **TanStack Query**: Data fetching and caching via Axios
+- **NextAuth.js**: Authentication (GitHub + Google OAuth)
+- **TipTap**: Rich text editor with mentions and autocomplete
+- **Stripe**: Payment integration
+- **PostHog + Vercel Analytics**: Analytics
 
 ### Project Structure
 
-#### Core Application (`src/app/`)
+```
+src/
+├── app/                         # Next.js App Router
+│   ├── (auth)/signin/           # Sign-in page
+│   ├── (main)/                  # Main app routes
+│   │   ├── (chat)/              # Chat interface (home page)
+│   │   ├── [username]/          # Public user profiles
+│   │   ├── apps/                # App management (CRUD, connect, dashboard)
+│   │   ├── c/[id]/              # Individual conversations
+│   │   ├── shared/c/[id]/       # Shared conversation views
+│   │   ├── u/[name]/            # User profiles by name
+│   │   ├── community/           # Community page
+│   │   ├── explore/             # Explore apps/models
+│   │   ├── features/            # Features page
+│   │   ├── models/              # Available models
+│   │   ├── onboarding/          # Onboarding flow
+│   │   └── pricing/             # Pricing page
+│   ├── (tools)/tools/           # Standalone tools
+│   │   ├── llm-comparison/      # LLM comparison tool
+│   │   └── llm-price-prediction/# Price prediction tool
+│   ├── actions/                 # Server actions
+│   │   ├── generate-text.ts
+│   │   ├── enhance-prompt.ts
+│   │   ├── ask-followup-question.ts
+│   │   └── s3-actions.ts
+│   ├── api/                     # API routes
+│   │   ├── auth/[...nextauth]/  # NextAuth handler
+│   │   ├── auth/callback/github/# GitHub OAuth callback
+│   │   ├── autocomplete/        # Autocomplete (GPT-4.1-mini)
+│   │   └── og/                  # OG image generation
+│   ├── layout.tsx               # Root layout
+│   └── providers.tsx            # React Query, Theme, Session providers
+├── components/
+│   ├── ui/                      # Shadcn/ui library (45+ components)
+│   ├── chat/                    # Chat interface components
+│   ├── chat-editor/             # TipTap rich text editor + mentions
+│   ├── layout/                  # Header, sidebar, history, search
+│   ├── app-creation/            # App creation form sections
+│   ├── analytics/               # Analytics dashboard components
+│   ├── shared/                  # Cross-feature components
+│   ├── home/                    # Home page components
+│   ├── landing/                 # Landing page components
+│   ├── onboarding/              # Onboarding flow
+│   ├── payment/                 # Stripe checkout
+│   ├── icons/                   # Brand SVG icons
+│   └── sign-in/                 # Sign-in UI
+├── hooks/                       # 21 custom hooks
+│   ├── use-chat.tsx             # Core chat hook (AI SDK based)
+│   ├── use-user.ts              # User profile fetching
+│   ├── use-official-apps.ts     # Official + personal apps
+│   ├── use-user-apps.ts         # User's personal apps
+│   ├── use-published-digital-clones.ts
+│   ├── use-digital-clone.ts     # Single app/clone
+│   ├── use-dashboard-data.ts    # Analytics data
+│   ├── use-app-resources.ts     # Social content
+│   ├── use-suggested-questions.ts
+│   ├── use-generate-suggested-questions.ts
+│   ├── use-models.ts            # AI models
+│   ├── use-google-one-tap.ts    # Google sign-in
+│   ├── use-at-bottom.tsx        # Scroll detection
+│   ├── use-auto-scroll.ts       # Auto-scroll
+│   ├── use-copy.ts              # Clipboard
+│   ├── use-toast.ts             # Toast notifications
+│   ├── use-mobile.tsx           # Mobile detection
+│   ├── use-screen.ts            # Screen size
+│   ├── use-latest.ts            # Latest ref value
+│   └── useDebounce.ts           # Debounce
+├── store/                       # Zustand stores
+│   ├── app.tsx                  # UI state (dialogs, sidebar)
+│   ├── chat.tsx                 # Chat settings (anonymous, debate, deep think)
+│   ├── model.tsx                # Model cache (1-hour TTL)
+│   ├── subscription-state.tsx   # Subscription plan data
+│   ├── campaign.ts              # Campaign state
+│   └── connected-sources.ts     # Social source management (sessionStorage)
+├── services/
+│   └── api.ts                   # GengarApi class - main backend client
+├── lib/
+│   ├── auth.ts                  # NextAuth.js configuration
+│   ├── utils.ts                 # cn(), URL helpers, model lists
+│   ├── posthog.ts               # PostHog analytics init
+│   └── payment.ts               # Payment utilities
+├── theming/                     # Theme configuration + providers
+├── constants/                   # Application constants
+├── utils/                       # Utility functions
+└── @types/                      # TypeScript type definitions
+```
 
-- `(main)/` - Main application routes (chat, apps, community, etc.)
-- `(tools)/` - Standalone tools (LLM comparison, price prediction)
-- `api/` - API routes for authentication and backend proxy
+### Key Files
 
-#### Key Directories
+- **API Client**: `src/services/api.ts` - All backend communication via `gengarApi` singleton
+- **Auth Config**: `src/lib/auth.ts` - NextAuth.js with GitHub/Google, 90-day JWT sessions
+- **Root Middleware**: `middleware.ts` - Route protection, `/@username` rewrites
+- **Theme**: `src/theming/theme.ts` - Custom color tokens
+- **Types**: `src/lib/types.ts` - Core TypeScript interfaces
 
-- `src/components/` - Reusable React components
-  - `chat/` - Chat interface and message handling
-  - `ui/` - Shadcn/ui component library
-  - `shared/` - Cross-feature shared components
-- `src/hooks/` - Custom React hooks
-- `src/store/` - Zustand state stores (chat, app, model, subscription)
-- `src/services/` - API clients and external service integrations
-- `src/lib/` - Core utilities (auth, payments, utils)
+### Authentication Flow
+
+1. User signs in via GitHub or Google (NextAuth.js)
+2. JWT token created with 90-day expiry
+3. `gengarApi` attaches token via Axios interceptor
+4. Backend validates JWT on each request
+
+### Public Routes (no auth required)
+
+`/`, `/pricing`, `/features`, `/explore`, `/community`, `/models`, `/signin`, `/shared/c/*`, `/tools/*`, `/@username`, `/commerce-disclosure`, `/terms-of-service`, `/privacy`
+
+### Data Flow
+
+1. `gengarApi` (Axios) calls backend `/internal/api/v1/*`
+2. React Query caches responses with configurable stale times
+3. Zustand stores manage client-side UI state
+4. Components consume data via hooks (`use-*.ts`)
 
 ## Coding Conventions
 
-### Core Principles
+### Component Usage Priority
 
-#### 1. Component Usage Priority
+**ALWAYS use shadcn/ui components first** - check `src/components/ui/` before creating custom ones.
 
-**ALWAYS use shadcn/ui components first**:
+### File Size Limit
 
-- Check `src/components/ui/` before creating custom components
-- Available components: Button, Input, Badge, Card, Dialog, Form, etc.
-- Use shadcn variants and modify via className when needed
-- Only create custom components when shadcn doesn't provide the functionality
+**Maximum 500 lines per file.** When exceeded, split:
 
-#### 2. File Size and Component Structure
-
-- **Maximum file size: 500 lines**
-- When exceeding 500 lines, split into smaller components:
-  ```
-  feature/
-  ├── index.tsx           # Exports
-  ├── feature-main.tsx    # Main component
-  ├── components/         # Sub-components
-  │   ├── feature-header.tsx
-  │   ├── feature-content.tsx
-  │   └── feature-footer.tsx
-  └── hooks/             # Feature-specific hooks
-      └── use-feature.ts
-  ```
+```
+feature/
+├── index.tsx
+├── feature-main.tsx
+├── components/
+│   ├── feature-header.tsx
+│   └── feature-content.tsx
+└── hooks/
+    └── use-feature.ts
+```
 
 ### Color System
 
-#### Always Use Theme Variables
+Always use theme variables, never hardcoded colors:
 
 ```tsx
-// ❌ Don't use hardcoded colors
-"bg-blue-500";
-"text-gray-600";
+// Use these
+"bg-primary"  "text-muted-foreground"  "bg-background"  "border-border"
 
-// ✅ Use theme variables
-"bg-primary";
-"text-muted-foreground";
-"bg-background";
-"border-border";
+// Never these
+"bg-blue-500"  "text-gray-600"
 ```
 
-#### Color Token Standards
+### Icons
+
+1. `lucide-react` - Primary (never add color classes to these)
+2. `hugeicons-react` - Secondary
+3. `@radix-ui/react-icons` - For shadcn components
+4. `src/components/icons/` - Custom brand icons
+
+Standard sizes: `size-3` (12px), `size-4` (16px), `size-5` (20px), `size-6` (24px)
+
+### Data Fetching
+
+**CRITICAL**: All API calls must use TanStack Query, never direct fetch/axios in components.
 
 ```tsx
-// Primary colors
-"bg-primary"; // Main actions
-"hover:bg-primary/90"; // Hover states
-"bg-primary/10"; // Subtle backgrounds
+// Always this pattern
+const { data, isLoading } = useQuery({
+  queryKey: ['resource', id],
+  queryFn: () => gengarApi.getResource(id),
+});
 
-// Text colors
-"text-foreground"; // Default text
-"text-muted-foreground"; // Secondary text
-"text-destructive"; // Error text
-
-// Borders and rings
-"border-border"; // Default border
-"ring-ring"; // Focus ring
-"border-input"; // Form input border
-
-// Opacity modifiers
-"bg-primary/10"; // Very subtle
-"bg-primary/20"; // Subtle
-"bg-primary/50"; // Medium
-"bg-primary/80"; // High emphasis
+// Mutations
+const mutation = useMutation({
+  mutationFn: (body) => gengarApi.createResource(body),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['resource'] }),
+});
 ```
 
-### Component Patterns
-
-#### Buttons
-
-```tsx
-// Primary Button
-<Button className="w-full">Content</Button>
-
-// Secondary Button
-<Button variant="secondary" size="sm">Content</Button>
-
-// Ghost Button
-<Button variant="ghost" size="sm">Content</Button>
-```
-
-#### Cards
-
-```tsx
-<div className="relative overflow-hidden bg-background rounded-xl border shadow-sm hover:border-primary/50 transition-colors">
-  {/* Content */}
-</div>
-```
-
-#### Badges
-
-```tsx
-// Standard Badge
-<Badge variant="outline" className="text-muted-foreground hover:bg-accent transition-colors" />
-
-// Gradient Badge (for special cases)
-<Badge variant="outline" className="text-[10px] px-2 py-0.5 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-full font-medium" />
-```
-
-#### Forms
-
-```tsx
-<FormField
-  control={form.control}
-  name="fieldName"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Label</FormLabel>
-      <FormControl>
-        <Input {...field} />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-```
-
-### Typography Standards
-
-```tsx
-// Headings
-<h1 className="text-2xl md:text-3xl font-bold">
-<h2 className="text-xl md:text-2xl font-medium">
-<h3 className="text-sm font-medium text-muted-foreground">
-
-// Body Text
-<p className="text-sm text-muted-foreground">
-<span className="text-xs text-muted-foreground">
-```
-
-### Icon System
-
-#### Icon Package Priority
-
-1. `lucide-react` - Primary icon library for all UI elements
-2. `hugeicons-react` - Secondary option when lucide-react doesn't have the needed icon
-3. `@radix-ui/react-icons` - For shadcn/ui components (when specifically required)
-4. `src/components/icons/` - For custom brand icons
-
-#### Standard Icon Sizes
-
-```tsx
-"size-3"; // 12px - Tiny icons
-"size-4"; // 16px - Default size
-"size-5"; // 20px - Medium icons
-"size-6"; // 24px - Large icons
-```
-
-#### Icon Coloring
-
-```tsx
-// ❌ Don't add color classes to lucide-react or hugeicons-react icons
-<LucideIcon className="text-primary" />        // Don't do this
-<HugeIcon className="text-muted-foreground" />  // Don't do this
-
-// ✅ Use icons without color classes - they inherit from parent
-<LucideIcon className="size-4" />              // Correct - no color
-<HugeIcon className="size-4" />                // Correct - no color
-
-// ✅ Only add colors to custom brand icons when necessary
-<CustomBrandIcon className="text-primary" />   // Only for custom icons
-```
-
-#### Icon Usage
-
-```tsx
-// With proper accessibility
-<Button variant="ghost" size="icon">
-  <Icon className="size-4" />
-  <span className="sr-only">Action name</span>
-</Button>
-
-// With text
-<Button>
-  <Icon className="mr-2 size-4" />
-  <span>Label</span>
-</Button>
-```
-
-### Layout Standards
-
-#### Responsive Design (Mobile First)
-
-```tsx
-// Typography
-"text-sm md:text-base lg:text-lg";
-
-// Layout
-"grid-cols-1 md:grid-cols-2";
-"hidden md:block";
-
-// Spacing
-"space-y-2 space-y-3 space-y-4"; // Vertical
-"space-x-2 space-x-3 space-x-4"; // Horizontal
-"p-4 p-6 px-4 py-5"; // Padding
-```
-
-#### Container Patterns
-
-```tsx
-// Main container
-<div className="flex flex-col items-center w-full flex-grow max-w-3xl">
-
-// Grid layout
-<div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-```
-
-### Accessibility Requirements
-
-#### ARIA Labels
-
-```tsx
-// Screen reader only content
-<span className="sr-only">Description</span>
-
-// Interactive elements
-<button aria-label="Close dialog">
-  <Icon />
-</button>
-
-// Form fields
-<input aria-describedby="error-message" />
-```
-
-#### Focus Management
-
-```tsx
-// Focus rings
-"focus:ring-2 focus:ring-ring focus:ring-offset-2";
-
-// Focus visible
-"focus-visible:ring-2 focus-visible:ring-ring";
-```
-
-### Best Practices
-
-#### 1. Naming Conventions
+### Naming Conventions
 
 - **Components**: PascalCase (`UserProfile`)
 - **Functions/Variables**: camelCase (`getUserData`)
 - **Files**: kebab-case (`user-profile.tsx`)
 - **Constants**: UPPER_CASE (`API_BASE_URL`)
 
-#### 2. Import Order
+### Import Order
 
 ```tsx
 // 1. React and Next.js
-import React from "react";
-import { useRouter } from "next/navigation";
+import React from 'react';
+import { useRouter } from 'next/navigation';
 
 // 2. External libraries
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 // 3. Internal components
-import { UserCard } from "./user-card";
+import { UserCard } from './user-card';
 
 // 4. Hooks and utilities
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from '@/hooks/use-auth';
 
 // 5. Types
-import type { User } from "@/types";
+import type { User } from '@/types';
 ```
 
-#### 3. Component Props Interface
+### Adding New API Endpoints
+
+1. Add method to `src/services/api.ts` in the `GengarApi` class
+2. Create a React Query hook in `src/hooks/`
+3. Use the hook in components
+4. Invalidate related queries on mutations
+
+### Adding New Pages
+
+1. Create route in `src/app/(main)/` or `src/app/(tools)/`
+2. If public, add path to `middleware.ts` public routes
+3. If it needs data, create hooks in `src/hooks/`
+4. Use existing layout components from `src/components/layout/`
+
+### Responsive Design
+
+Mobile-first approach:
 
 ```tsx
-interface ComponentProps extends React.HTMLAttributes<HTMLElement> {
-  variant?: "default" | "secondary";
-  size?: "sm" | "md" | "lg";
-}
+"text-sm md:text-base lg:text-lg"
+"grid-cols-1 md:grid-cols-2"
+"hidden md:block"
 ```
-
-#### 4. Error Handling
-
-```tsx
-// Error states
-"text-destructive";
-"border-destructive";
-
-// Loading states
-"animate-spin text-muted-foreground";
-"animate-pulse bg-primary/10";
-```
-
-#### 5. Transitions
-
-```tsx
-// Standard transitions
-"transition-colors duration-200";
-"hover:bg-accent transition-colors";
-```
-
-### State Management Patterns
-
-#### Hooks Pattern
-
-```tsx
-export function useFeature() {
-  const [state, setState] = useState();
-
-  useEffect(() => {
-    // Side effects
-  }, [dependencies]);
-
-  return { state, actions };
-}
-```
-
-#### Zustand Store Pattern
-
-```tsx
-export const useStore = create<StoreState>((set) => ({
-  state: initialState,
-  actions: {
-    updateState: (newState) => set({ state: newState }),
-  },
-}));
-```
-
-### Data Fetching Standards
-
-#### Always Use React Query for External API Calls
-
-**CRITICAL**: All external API communication must use TanStack Query (React Query), never direct fetch/axios calls in components.
-
-```tsx
-// ❌ Don't use direct API calls in components
-const [data, setData] = useState();
-useEffect(() => {
-  fetch("/api/users").then(setData);
-}, []);
-
-// ✅ Use React Query for all external communication
-const { data, isLoading, error } = useQuery({
-  queryKey: ["users"],
-  queryFn: () => gengarApi.getUsers(),
-});
-```
-
-#### Query Key Conventions
-
-```tsx
-// Use descriptive, hierarchical query keys
-["users"][("users", userId)][("users", userId, "posts")][ // All users // Specific user // User's posts
-  ("conversations", { page, limit })
-]; // Paginated conversations
-```
-
-#### Mutation Patterns
-
-```tsx
-const mutation = useMutation({
-  mutationFn: (userData) => gengarApi.createUser(userData),
-  onSuccess: () => {
-    // Invalidate and refetch
-    queryClient.invalidateQueries({ queryKey: ["users"] });
-  },
-  onError: (error) => {
-    // Handle errors consistently
-    toast.error(error.message);
-  },
-});
-```
-
-#### Loading and Error States
-
-```tsx
-if (isLoading)
-  return <div className="animate-pulse bg-primary/10">Loading...</div>;
-if (error)
-  return <div className="text-destructive">Error: {error.message}</div>;
-```
-
-#### Query Client Setup
-
-- Use the existing query client from `src/components/query-client/`
-- Leverage automatic retries and caching
-- Set appropriate stale times based on data sensitivity
-
-### Performance Considerations
-
-1. **Lazy Loading**: Use `React.lazy()` for large components
-2. **Memoization**: Use `React.memo()` and `useMemo()` appropriately
-3. **Bundle Size**: Import only needed parts from libraries
-4. **Image Optimization**: Use Next.js Image component with proper sizing
-
-### Authentication & Authorization
-
-- NextAuth.js configuration in `src/lib/auth.ts`
-- GitHub and Google OAuth providers
-- JWT strategy with 90-day sessions
-- Route protection with authorized callback
-- Backend API token management through custom login endpoint
-
-### API Integration
-
-- Primary API client in `src/services/api.ts`
-- Backend communication via `gengarApi` class
-- Auto-generated TypeScript schemas from OpenAPI
-- Token management integrated with NextAuth session
 
 ### State Management
 
-- Chat state: anonymous mode, AI editing, web search, debate mode
-- Model selection and settings
-- App resources and subscription state
-- Persisted to localStorage via Zustand middleware
-
-### UI Components
-
-- Custom theme system with light/dark mode support
-- Tailwind CSS with extensive custom color tokens
-- Radix UI primitives for accessibility
-- Custom components in `src/components/ui/`
-
-### OAuth Integrations
-
-Reddit OAuth is implemented for social data collection:
-
-- OAuth flow in `src/app/(main)/apps/connect/page.tsx`
-- Reddit URL builder in `src/lib/utils.ts`
-- Required scopes: identity, history, read, submit
-- Environment variable: `NEXT_PUBLIC_REDDIT_CLIENT_ID`
-
-### Content & Features
-
-- Multi-model AI chat interface with memory sources
-- Digital clone creation and management
-- Social platform integrations (Reddit, LinkedIn, Medium, Goodreads)
-- Subscription management with Stripe
-- Analytics dashboard and conversation tracking
-- Rich text editing with mentions and autocomplete
-- Shared conversation functionality
-
-### Environment Setup
-
-Development server runs on port 4000. For HTTPS development, use `yarn dev:https` which proxies port 4001 to 4002.
-
-Required environment variables include OAuth client secrets, Stripe keys, and backend API configuration.
-
-### Important Files and Locations
-
-- **API Client**: `src/services/api.ts` - Main backend API integration using Axios
-- **Auth Configuration**: `src/lib/auth.ts` - NextAuth.js setup
-- **Theme Configuration**: `src/theming/theme.ts` - Custom color tokens and theme system
-- **Zustand Stores**: `src/store/` - Application state management
-- **Type Definitions**: `src/lib/types.ts` - Core TypeScript interfaces
-- **Environment Types**: `env.d.ts` - Environment variable type definitions
-
-### Common Patterns for API Integration
-
-When adding new API endpoints:
-
-1. Add the endpoint method to `src/services/api.ts` in the `GengarApi` class
-2. Use the method in components via React Query hooks
-3. Handle loading/error states consistently
-4. Invalidate related queries on mutations
-
-Example:
-```tsx
-// In api.ts
-async getAppDetails(appId: string) {
-  const response = await this.client.get(`/apps/${appId}`);
-  return response.data;
-}
-
-// In component
-const { data, isLoading } = useQuery({
-  queryKey: ['app', appId],
-  queryFn: () => gengarApi.getAppDetails(appId),
-});
-```
+- **Server state**: TanStack Query (API data)
+- **Client state**: Zustand stores (UI state, chat settings)
+- **Form state**: react-hook-form with zod validation
+- **URL state**: Next.js searchParams for shareable state

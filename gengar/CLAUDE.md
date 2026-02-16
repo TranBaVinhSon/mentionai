@@ -1,184 +1,239 @@
-# CLAUDE.md
+# CLAUDE.md - Backend (gengar)
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with the backend.
 
 ## Essential Commands
 
-### Development Setup
-
 ```bash
-# Setup database (required before first run)
-docker-compose up gengar_db
+# Development setup
+docker-compose up gengar_db       # Start PostgreSQL with pgvector
+yarn install                      # Install dependencies
+yarn build                        # Build (required before migrations)
+yarn migration:run                # Run pending migrations
+yarn start:dev                    # Start with hot reload (port 3000)
 
-# Install dependencies
-yarn install
+# Build & lint
+yarn build                        # Production build
+yarn lint                         # ESLint check + fix
+yarn format                       # Prettier formatting
 
-# Run database migrations
-yarn migration:run
+# Tests
+yarn test                         # Run unit tests
+yarn test:watch                   # Watch mode
+yarn test:cov                     # Coverage report
+yarn test:e2e                     # End-to-end tests (uses test/jest-e2e.json)
 
-# Start development server with hot reload
-yarn start:dev
-```
+# Database
+yarn migration:create             # Create new migration
+yarn migration:run                # Run pending migrations
+yarn migration:revert             # Revert last migration
+yarn seed:run                     # Run database seeders
 
-### Common Development Tasks
+# CLI commands (data operations)
+yarn command:run generate-metadata
+yarn command:run:gc generate-embeddings   # With garbage collection
+yarn command:run reindex-linkedin-memories
+yarn command:run update-suggested-questions
+yarn command:run reindex-chroma
+yarn command:run refetch-data-sync
 
-```bash
-# Build the application
-yarn build
-
-# Lint and format code
-yarn lint
-yarn format
-
-# Run tests
-yarn test                    # Run all tests
-yarn test:watch             # Run tests in watch mode
-yarn test:cov               # Run tests with coverage
-yarn test:e2e               # Run end-to-end tests
-
-# Database operations
-yarn migration:create       # Create new migration
-yarn migration:run         # Run pending migrations
-yarn migration:revert      # Revert last migration
-yarn seed:run              # Run database seeders
-
-# Production deployment
-yarn start:prod            # Start in production mode
-yarn update                # Full update: pull, install, build, migrate
+# Production
+yarn start:prod                   # Start with --expose-gc
+yarn update                       # Pull, install, build, migrate
 ```
 
 ## Architecture Overview
 
-### Core Framework
+### Tech Stack
 
-- **NestJS**: Main application framework with modular architecture
-- **TypeORM**: Database ORM with PostgreSQL
-- **Express**: Underlying HTTP server with custom middleware
-- **Swagger**: API documentation (available at `/api/docs/v1` in non-production)
+- **NestJS 10**: Modular application framework
+- **TypeORM**: ORM with PostgreSQL + pgvector
+- **Express**: HTTP server with middleware
+- **Passport + JWT**: Authentication
+- **Swagger**: API docs at `/api/docs/v1` (non-production only)
+- **Winston**: Logging with daily rotate files
+- **Rollbar**: Error monitoring
+- **nest-commander**: CLI command framework
 
-### Key Modules Structure
+### Project Structure
 
-- **Completions**: AI chat completions with debate moderation and usage tracking
-- **Conversations**: Chat conversation management with memory integration
-- **Apps**: Custom app management with social media integrations
-- **Auth**: JWT-based authentication with OAuth2 support
-- **Users**: User management with Stripe subscription integration
-- **Messages**: Message handling with attachments support
-- **Agents**: Specialized AI agents (GIF, image, video generation, web search, content retrieval)
+```
+src/
+├── agents/              # AI agent implementations
+│   ├── enhanced-memory-search.ts
+│   ├── memory-search.ts
+│   ├── generate-image.ts
+│   ├── retrieve-content-from-url.ts
+│   └── web-search.ts
+├── commands/            # CLI commands (nest-commander)
+│   ├── generate-embeddings.command.ts
+│   ├── generate-metadata.command.ts
+│   ├── refetch-data-sync.command.ts
+│   ├── reindex-chroma.command.ts
+│   ├── reindex-linkedin-memories.command.ts
+│   └── update-suggested-questions.command.ts
+├── common/              # Logger setup
+├── config/
+│   ├── configuration.ts         # Environment config loader
+│   ├── constants.ts             # Application constants
+│   ├── rollbar-exception.filter.ts
+│   └── rollbar.provider.ts
+├── db/
+│   ├── entities/        # 7 TypeORM entities
+│   ├── migrations/      # 37 migration files
+│   ├── repositories/    # 7 repository classes
+│   └── seeds/           # Database seeders
+├── middleware/
+│   ├── blacklist.middleware.ts
+│   └── logger.middleware.ts
+├── modules/             # 20 feature modules (see below)
+├── console.ts           # CLI entry point
+├── console.module.ts    # CLI module setup
+├── main.ts              # App bootstrap
+├── app.module.ts        # Root module
+└── route.ts             # API route registration
+```
 
-### Database Architecture
+### Feature Modules (src/modules/)
 
-- **Entities**: User, Conversation, Message, App, SocialCredential, SocialContent, AppLink
-- **Migrations**: Located in `src/db/migrations/` with TypeORM CLI integration
-- **Repositories**: Custom repository pattern for database operations
-- **Seeders**: Database seeding for initial app data
+| Module | Description |
+|---|---|
+| `auth/` | JWT authentication with GitHub OAuth2 |
+| `users/` | User management + Stripe subscriptions |
+| `conversations/` | Chat conversation CRUD + memory |
+| `completions/` | AI chat completions, debate moderation, usage tracking |
+| `messages/` | Message handling with attachments |
+| `apps/` | App (digital clone) management |
+| `app-analytics/` | App usage analytics |
+| `models/` | AI model management |
+| `memory/` | Mem0 AI memory integration |
+| `embeddings/` | Vector embedding generation |
+| `chroma/` | ChromaDB vector database |
+| `retrieval/` | Content retrieval from URLs |
+| `content-chunker/` | Content chunking for embeddings |
+| `linkedin/` | LinkedIn data integration |
+| `twitter/` | Twitter/X data integration |
+| `stripe/` | Payment processing + webhooks |
+| `s3-handler/` | AWS S3 file operations |
+| `replicate/` | AI image/video generation |
+| `cron/` | Scheduled tasks |
+| `common/` | Shared utilities |
 
-### AI Integration Stack
+### Database Entities
 
-- **Multiple AI Providers**: Anthropic, OpenAI, Google, DeepSeek via AI SDK
-- **LangChain**: Advanced AI workflows and agent orchestration
-- **Mem0**: AI memory management for conversations
-- **Replicate**: AI image/video generation services
+- **User**: Core user with subscription info, settings
+- **Conversation**: Chat sessions with app association
+- **Message**: Individual messages with role, content, attachments
+- **App**: Digital clones with config, prompts, models
+- **SocialCredential**: OAuth tokens for connected platforms
+- **SocialContent**: Ingested content from social platforms
+- **AppLink**: URL resources linked to apps
 
-### External Integrations
+### API Routes
 
-- **Social Media**: Facebook, LinkedIn, Threads, Gmail, GitHub via dedicated services
-- **Storage**: AWS S3 for file uploads and media storage
-- **Payments**: Stripe for subscription management
-- **Monitoring**: Rollbar for error tracking with custom exception filters
-- **Search**: Exa.js for web search capabilities
+All registered under `/internal/api/v1` (see `src/route.ts`):
 
-### GitHub OAuth Configuration
+- `ConversationsModule` - Conversation CRUD
+- `CompletionsModule` - AI chat completions
+- `ModelsModule` - Available AI models
+- `AuthModule` - Authentication endpoints
+- `StripeModule` - Payment webhooks
+- `UsersModule` - User profile management
+- `AppsModule` - App/clone management
+- `AppAnalyticsModule` - Usage analytics
 
-- **Single OAuth App**: Uses one GitHub OAuth app for both authentication and apps connection
-- **Dynamic Redirect URIs**:
-  - Authentication flow: `{FRONTEND_URL}/api/auth/callback/github`
-  - Apps connection flow: `{FRONTEND_URL}/apps/connect`
-- **Scoped Permissions**:
-  - Auth flow: `user:email` (minimal)
-  - Apps flow: `user:email,public_repo` (extended)
-- **Setup**: Register `{FRONTEND_URL}/api/auth/callback/github` as the primary callback URL in GitHub OAuth app settings
+### AI Integration
 
-### Configuration Management
+- **AI SDK**: Anthropic, OpenAI, Google, DeepSeek, OpenRouter providers
+- **LangChain**: Advanced agent orchestration
+- **Mem0**: Conversation memory management
+- **ChromaDB**: Vector search for knowledge retrieval
+- **Replicate**: Image and video generation
+- **Exa.js**: Web search capabilities
 
-- Environment-based configuration in `src/config/configuration.ts`
-- Database connection via environment variables (see `ormconfig.ts`)
-- Required environment variables: database credentials, JWT secret, AI API keys, AWS credentials
+### External Services
 
-### Security Features
+- **Social Media**: Facebook, LinkedIn, Twitter/X, Threads, Gmail, GitHub, Reddit, Medium, Substack, Goodreads
+- **AWS S3**: File uploads and media storage (region: ap-northeast-1)
+- **Stripe**: Subscription management with webhook handling
+- **Rollbar**: Error tracking with custom exception filters
 
-- JWT authentication with Passport.js
-- Request validation with class-validator
-- CORS configuration with environment-specific allowlists
-- Raw body parsing for webhook endpoints (Stripe)
-- Global exception handling with Rollbar integration
+### Configuration
 
-### Development Patterns
+Main config in `src/config/configuration.ts`:
 
-- **Modular Architecture**: Each feature as a separate NestJS module
-- **DTO Pattern**: Input/output validation with class-transformer
-- **Repository Pattern**: Database access abstraction
-- **Agent Pattern**: Specialized AI agents for different tasks
-- **Service Layer**: Business logic separation from controllers
+```
+port: PORT || 3000
+node_env: NODE_ENV || 'local'
+jwt_secret: JWT_SECRET
+frontend_url: FRONTEND_URL
+oauth2.github: GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK_URL
+aws: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET_NAME
+replicate: REPLICATE_API_TOKEN
+```
 
-## Coding Standards and Style Guide
+Database config in `ormconfig.ts`:
+- `GENGAR_DB_HOSTNAME`, `GENGAR_DB_PORT`, `GENGAR_DB_USERNAME`, `GENGAR_DB_PASSWORD`, `GENGAR_DB_NAME`
 
-### CRITICAL: Code Modification Rules
+### Deployment
+
+- **Platform**: Heroku with `heroku/nodejs` buildpack
+- **Procfile**: `web: yarn start:prod`
+- **Build**: `heroku-postbuild` script handles prebuild + nest build
+- **Post-deploy**: Migrations run automatically via CI/CD
+
+## Coding Standards
+
+### Code Modification Rules
 
 - **NEVER** change existing code formatting, quotes, or style unless explicitly requested
-- **ONLY** modify the specific code lines that are directly related to the requested change
-- **PRESERVE** all existing formatting, indentation, and code style patterns
+- **ONLY** modify the specific code lines directly related to the requested change
+- **PRESERVE** all existing formatting, indentation, and style patterns
 - **DO NOT** convert single quotes to double quotes or vice versa
-- **DO NOT** change spacing, line breaks, or indentation in unrelated code
-- **DO NOT** refactor or "improve" code unless specifically asked to do so
+- **DO NOT** refactor or "improve" code unless specifically asked
 
-### Style Conventions to Maintain
+### Style Conventions
 
-- **Quotes**: Use single quotes (`'`) for strings - DO NOT change to double quotes
-- **Semicolons**: Follow existing semicolon usage patterns in each file
-- **Indentation**: Preserve existing indentation (spaces vs tabs) in each file
-- **Line endings**: Maintain existing line ending patterns
-- **Import statements**: Keep existing import formatting and order
-- **Object formatting**: Preserve existing object property formatting
+- **Quotes**: Single quotes (`'`) for strings
+- **Semicolons**: Follow existing patterns in each file
+- **Indentation**: Preserve existing indentation per file
+- **Imports**: Keep existing formatting and order
 
 ### When Making Changes
 
-1. **Read the target file first** to understand its existing style
-2. **Make only the minimal necessary changes** to implement the requested feature
-3. **Follow the existing patterns** in the file you're modifying
-4. **Run `yarn lint` and `yarn format`** after changes to ensure compliance
-5. **Never mass-format files** unless explicitly requested
-
-### Linting and Formatting
-
-- Always run `yarn lint` after making changes
-- Use `yarn format` only when explicitly requested or when lint errors require it
-- If linting fails, fix only the specific errors - do not reformat entire files
+1. Read the target file first to understand its style
+2. Make only the minimal necessary changes
+3. Follow existing patterns in the file
+4. Run `yarn lint` after changes
+5. Never mass-format files unless requested
 
 ### Database Naming Conventions
 
-- **Table Names**: Use snake_case (e.g., `social_credentials`, `app_links`)
-- **Column Names**: Use camelCase (e.g., `createdAt`, `userId`, `subscriptionPlan`)
-- **Entity Properties**: Follow camelCase to match column names in TypeORM entities
-- **Migration Files**: Use descriptive PascalCase names with timestamp prefix
+- **Table names**: snake_case (`social_credentials`, `app_links`)
+- **Column names**: camelCase (`createdAt`, `userId`, `subscriptionPlan`)
+- **Entity properties**: camelCase to match column names
+- **Migration files**: Descriptive PascalCase with timestamp prefix
 
-[byterover-mcp]
+### Development Patterns
 
-[byterover-mcp]
+- **Modular Architecture**: Each feature is a separate NestJS module
+- **DTO Pattern**: Input/output validation with class-validator + class-transformer
+- **Repository Pattern**: Database access through custom repositories
+- **Agent Pattern**: Specialized AI agents for different tasks (image gen, web search, content retrieval)
+- **Service Layer**: Business logic separated from controllers
 
-You are given two tools from Byterover MCP server, including
-## 1. `byterover-store-knowledge`
-You `MUST` always use this tool when:
+### Adding New Features
 
-+ Learning new patterns, APIs, or architectural decisions from the codebase
-+ Encountering error solutions or debugging techniques
-+ Finding reusable code patterns or utility functions
-+ Completing any significant task or plan implementation
+1. Create a new module: `nest g module modules/feature-name`
+2. Add entity in `src/db/entities/` if DB table needed
+3. Add repository in `src/db/repositories/`
+4. Create migration: `yarn migration:create src/db/migrations/FeatureName`
+5. Implement service + controller in the module
+6. Register route in `src/route.ts` if it needs an API endpoint
+7. Run `yarn build && yarn migration:run` to apply
 
-## 2. `byterover-retrieve-knowledge`
-You `MUST` always use this tool when:
+### Adding New CLI Commands
 
-+ Starting any new task or implementation to gather relevant context
-+ Before making architectural decisions to understand existing patterns
-+ When debugging issues to check for previous solutions
-+ Working with unfamiliar parts of the codebase
+1. Create command file in `src/commands/`
+2. Register in `src/console.module.ts`
+3. Run with `yarn command:run <command-name>`
