@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 import {
   ArrowLeft,
   Globe,
@@ -174,8 +175,8 @@ export default function DashboardPage({
         <div className="flex items-center space-x-3 order-1 sm:order-1">
           <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
             <AvatarImage src={app?.logo} alt={app?.displayName || app?.name} />
-            <AvatarFallback>
-              {(app?.displayName || app?.name || "DC").charAt(0).toUpperCase()}
+            <AvatarFallback className={`text-white font-medium ${getAvatarColor(app?.displayName || app?.name || "DC")}`}>
+              {getInitial(app?.displayName || app?.name || "DC")}
             </AvatarFallback>
           </Avatar>
           <div>

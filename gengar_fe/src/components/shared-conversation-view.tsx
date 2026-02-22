@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { ChatMessage, ToolResult } from "@/components/chat/chat-message";
 import { MentionHighlight } from "@/components/mention-highlight";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 import { setSignInDialog } from "@/store/app";
 
 // Define DisplayMessage
@@ -86,7 +87,7 @@ export default function SharedConversationView({ conversation }: { conversation:
               {message.role === "user" ? (
                 <div className="flex not-prose items-start w-full">
                   <Avatar className="w-6 h-6 mr-4 mt-1 flex-shrink-0">
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarFallback className={`text-white text-xs font-medium ${getAvatarColor("User")}`}>U</AvatarFallback>
                   </Avatar>
                   <div className="flex-grow">
                     <div className="prose dark:prose-invert !leading-8 text-base font-medium">

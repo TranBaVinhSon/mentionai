@@ -16,6 +16,7 @@ import clsx from "clsx";
 import { MentionHighlight } from "@/components/mention-highlight";
 import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 import {
   extractTextModelsFromRequest,
   extractAppIdsFromRequest,
@@ -685,8 +686,8 @@ export const ChatApp = ({
                           <div className="flex not-prose items-start w-full">
                             <Avatar className="w-6 h-6 mr-4 mt-1 flex-shrink-0">
                               <AvatarImage src={session?.user?.image || ""} />
-                              <AvatarFallback>
-                                {session?.user?.name?.charAt(0) || "U"}
+                              <AvatarFallback className={`text-white text-xs font-medium ${getAvatarColor(session?.user?.name || session?.user?.email || "U")}`}>
+                                {getInitial(session?.user?.name || session?.user?.email || "U")}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-grow">

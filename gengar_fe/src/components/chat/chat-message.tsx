@@ -24,6 +24,7 @@ import {
 import AppLogo from "../shared/app-logo";
 import { ProfileHoverCard } from "../shared/profile-hover-card";
 import { useUser } from "@/hooks/use-user";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 
 function getMediumZoomMargin() {
   const width = window.innerWidth;
@@ -519,20 +520,8 @@ const ChatMessageComponent = ({
                       className="object-cover not-prose"
                     />
                   ) : null}
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium avatar-image">
-                    {(
-                      message?.app?.displayName ||
-                      app?.displayName ||
-                      message?.appDetails?.appName ||
-                      app?.name ||
-                      message?.app?.name ||
-                      "A"
-                    )
-                      .split(" ")
-                      .map((word) => word[0])
-                      .join("")
-                      .substring(0, 2)
-                      .toUpperCase() || "AP"}
+                  <AvatarFallback className={cn("text-white text-xs font-medium avatar-image", getAvatarColor(message?.app?.displayName || app?.displayName || message?.appDetails?.appName || app?.name || message?.app?.name || "A"))}>
+                    {getInitial(message?.app?.displayName || app?.displayName || message?.appDetails?.appName || app?.name || message?.app?.name || "A")}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm font-medium text-foreground">

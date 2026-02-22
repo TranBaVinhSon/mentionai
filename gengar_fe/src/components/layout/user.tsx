@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { LogIn as LoginCircle02Icon } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { setSignInDialog } from "@/store/app";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 
 export const User = memo(() => {
   const { data: session, status } = useSession();
@@ -32,7 +33,9 @@ export const User = memo(() => {
       )}
     >
       <AvatarImage src={session?.user?.image || ""} />
-      <AvatarFallback>{session?.user?.name?.charAt(0) || "TS"}</AvatarFallback>
+      <AvatarFallback className={cn("text-white font-medium", getAvatarColor(session?.user?.name || session?.user?.email || "U"))}>
+        {getInitial(session?.user?.name || session?.user?.email || "U")}
+      </AvatarFallback>
     </Avatar>
   );
 });

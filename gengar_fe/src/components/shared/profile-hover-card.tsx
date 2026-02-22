@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 
 export interface ProfileHoverCardProps {
   avatar?: string;
@@ -75,17 +76,14 @@ export function ProfileHoverCard({
                 {/* Avatar */}
                 <div className="relative flex-shrink-0">
                   <Avatar className="w-16 h-16 border-2 border-background shadow-sm">
-                    <AvatarImage
-                      src={
-                        avatar ||
-                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          displayName
-                        )}&background=random`
-                      }
-                      alt={displayName}
-                    />
-                    <AvatarFallback className="text-lg font-medium">
-                      {displayName.charAt(0)}
+                    {avatar && (
+                      <AvatarImage
+                        src={avatar}
+                        alt={displayName}
+                      />
+                    )}
+                    <AvatarFallback className={cn("text-lg font-medium text-white", getAvatarColor(displayName))}>
+                      {getInitial(displayName)}
                     </AvatarFallback>
                   </Avatar>
                   {/* Online indicator */}

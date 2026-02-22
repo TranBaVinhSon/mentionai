@@ -35,6 +35,8 @@ import {
 } from "@/hooks/use-suggested-questions";
 import { TruncatedDescription } from "@/components/shared/truncated-description";
 import { UpgradeDialog } from "@/components/shared/upgrade-dialog";
+import { cn } from "@/lib/utils";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 
 // Helper function to get social media URLs
 function getSocialMediaUrl(type: SocialNetworkType, username: string): string {
@@ -356,16 +358,17 @@ export const PersonalAIScreen = ({
                     {/* Avatar centered */}
                     <div className="relative">
                       <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-3 md:border-4 border-white dark:border-black shadow-sm">
-                        <img
-                          src={
-                            app.logo ||
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              app.displayName || app.name
-                            )}&background=random`
-                          }
-                          alt={app.displayName}
-                          className="w-full h-full object-cover"
-                        />
+                        {app.logo ? (
+                          <img
+                            src={app.logo}
+                            alt={app.displayName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className={cn("w-full h-full flex items-center justify-center text-white font-bold text-3xl md:text-4xl", getAvatarColor(app.displayName || app.name))}>
+                            {getInitial(app.displayName || app.name)}
+                          </div>
+                        )}
                       </div>
                       <div
                         className={`absolute bottom-0.5 right-0.5 md:bottom-1 md:right-1 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-white dark:border-black ${
@@ -469,16 +472,17 @@ export const PersonalAIScreen = ({
                   {/* Avatar */}
                   <div className="relative flex-shrink-0">
                     <div className="w-20 h-20 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full overflow-hidden border-3 md:border-4 border-white dark:border-black shadow-sm">
-                      <img
-                        src={
-                          app.logo ||
-                          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            app.displayName || app.name
-                          )}&background=random`
-                        }
-                        alt={app.displayName}
-                        className="w-full h-full object-cover"
-                      />
+                      {app.logo ? (
+                        <img
+                          src={app.logo}
+                          alt={app.displayName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className={cn("w-full h-full flex items-center justify-center text-white font-bold text-3xl lg:text-4xl", getAvatarColor(app.displayName || app.name))}>
+                          {getInitial(app.displayName || app.name)}
+                        </div>
+                      )}
                     </div>
                     <div
                       className={`absolute bottom-1 right-1 md:bottom-1 md:right-1 w-4 h-4 md:w-4 md:h-4 lg:w-5 lg:h-5 rounded-full border-2 border-white dark:border-black ${

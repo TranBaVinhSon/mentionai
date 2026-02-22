@@ -18,6 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Upload, CheckCircle2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -84,8 +86,8 @@ export function Step2BasicInfo({
           <div className="flex flex-col items-center gap-4">
             <Avatar className="w-24 h-24">
               <AvatarImage src={previewUrl || ""} />
-              <AvatarFallback className="text-2xl">
-                {form.watch("displayName")?.charAt(0) || "U"}
+              <AvatarFallback className={cn("text-2xl text-white font-medium", getAvatarColor(form.watch("displayName") || "U"))}>
+                {getInitial(form.watch("displayName") || "U")}
               </AvatarFallback>
             </Avatar>
             <div className="flex items-center gap-2">

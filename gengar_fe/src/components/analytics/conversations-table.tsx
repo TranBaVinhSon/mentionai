@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 import {
   Table,
   TableBody,
@@ -22,7 +24,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { MessageSquare, User, Bot, Eye } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { MDX } from "@/components/mdx";
 
 interface Message {
@@ -113,7 +114,7 @@ export function ConversationsTable({ data }: ConversationsTableProps) {
                           src={conversation.user.avatar}
                           alt={conversation.user.email}
                         />
-                        <AvatarFallback className="text-xs">
+                        <AvatarFallback className={cn("text-xs text-white font-medium", getAvatarColor(conversation.user.email))}>
                           {getUserInitials(conversation.user.email)}
                         </AvatarFallback>
                       </Avatar>
