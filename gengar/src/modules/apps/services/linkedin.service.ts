@@ -73,15 +73,15 @@ export class LinkedInService extends BaseSnsService {
       this.logger.log(`Starting to process LinkedIn data for ${username}`);
 
       // 1. Store profile data (extracted from first post's author)
-      if (posts.length > 0) {
+      const postWithAuthor = posts.find((p) => p.author?.first_name);
+      if (postWithAuthor) {
         this.logger.log(`Processing profile data for ${username}`);
-        const firstPost = posts[0];
         const profileData = {
-          full_name: `${firstPost.author.first_name} ${firstPost.author.last_name}`,
-          headline: firstPost.author.headline,
-          username: firstPost.author.username || username,
-          profile_url: firstPost.author.profile_url || `https://www.linkedin.com/in/${username}/`,
-          profile_picture: firstPost.author.profile_picture || "",
+          full_name: `${postWithAuthor.author.first_name} ${postWithAuthor.author.last_name}`,
+          headline: postWithAuthor.author.headline,
+          username: postWithAuthor.author.username || username,
+          profile_url: postWithAuthor.author.profile_url || `https://www.linkedin.com/in/${username}/`,
+          profile_picture: postWithAuthor.author.profile_picture || "",
         };
 
         const profileContent: SocialContentData = {
@@ -216,11 +216,16 @@ export class LinkedInService extends BaseSnsService {
         throw new Error(`No posts found for LinkedIn profile: ${username}`);
       }
 
-      const firstPost = posts[0];
+      // Find first post with valid author data
+      const postWithAuthor = posts.find((p) => p.author?.first_name);
+      if (!postWithAuthor) {
+        throw new Error(`No author data found in LinkedIn posts for: ${username}`);
+      }
+
       const profileData = {
-        full_name: `${firstPost.author.first_name} ${firstPost.author.last_name}`,
-        headline: firstPost.author.headline,
-        profile_picture: firstPost.author.profile_picture,
+        full_name: `${postWithAuthor.author.first_name} ${postWithAuthor.author.last_name}`,
+        headline: postWithAuthor.author.headline,
+        profile_picture: postWithAuthor.author.profile_picture,
       };
 
       return {
