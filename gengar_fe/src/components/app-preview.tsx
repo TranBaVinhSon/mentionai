@@ -14,6 +14,8 @@ import {
   Share,
   Send,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 
 interface AppPreviewProps {
   displayName?: string;
@@ -80,8 +82,8 @@ export function AppPreview({
                       {logoUrl ? (
                         <AvatarImage src={logoUrl} alt={displayName} />
                       ) : (
-                        <AvatarFallback className="text-base lg:text-xl bg-brand/10 text-brand">
-                          {displayName.charAt(0).toUpperCase()}
+                        <AvatarFallback className={cn("text-base lg:text-xl text-white font-medium", getAvatarColor(displayName))}>
+                          {getInitial(displayName)}
                         </AvatarFallback>
                       )}
                     </Avatar>

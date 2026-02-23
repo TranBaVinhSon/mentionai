@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useOfficialApps } from "@/hooks/use-official-apps";
@@ -123,7 +124,7 @@ export default function ChatPage() {
                       <div className="flex items-center gap-3">
                         <Avatar className="size-10 ring-2 ring-transparent hover:ring-brand transition-all duration-200 cursor-pointer">
                           <AvatarImage src={app.logo} alt={app.displayName} />
-                          <AvatarFallback>{app.displayName[0]}</AvatarFallback>
+                          <AvatarFallback className={`text-white font-medium ${getAvatarColor(app.displayName)}`}>{getInitial(app.displayName)}</AvatarFallback>
                         </Avatar>
                         <div className="flex items-center gap-2">
                           <span

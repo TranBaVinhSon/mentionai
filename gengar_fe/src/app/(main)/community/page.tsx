@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarColor } from "@/utils/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   CalendarIcon,
@@ -481,7 +482,7 @@ export default function CommunityPage() {
                                               alt={name}
                                             />
                                           ) : null}
-                                          <AvatarFallback className="text-[9px]">
+                                          <AvatarFallback className={`text-[9px] text-white font-medium ${getAvatarColor(name)}`}>
                                             {getInitials(name)}
                                           </AvatarFallback>
                                         </Avatar>

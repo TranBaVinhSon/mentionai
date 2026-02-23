@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,7 +44,6 @@ import { useUser } from "@/hooks/use-user";
 import { ModelSettings } from "./model-settings";
 import { SettingsDialog } from "../shared/settings-dialog";
 import { toast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import { LinkedInLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 
 export function Header() {
@@ -322,8 +323,8 @@ export function Header() {
                           src={session?.user?.image || ""}
                           alt={session?.user?.name || ""}
                         />
-                        <AvatarFallback>
-                          {session?.user?.name?.[0] || "U"}
+                        <AvatarFallback className={cn("text-white font-medium", getAvatarColor(session?.user?.name || session?.user?.email || "U"))}>
+                          {getInitial(session?.user?.name || session?.user?.email || "U")}
                         </AvatarFallback>
                       </Avatar>
                     </Button>

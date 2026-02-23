@@ -14,6 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 import { usePublishedApp } from "@/hooks/use-digital-clone";
 
 interface PublishedApp {
@@ -71,12 +72,8 @@ export default function PublicClonePage() {
       <div className="flex items-start space-x-6 mb-8">
         <Avatar className="h-20 w-20">
           <AvatarImage src={app.logo} alt={app.displayName} />
-          <AvatarFallback>
-            {app.displayName
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)}
+          <AvatarFallback className={`text-white text-lg font-medium ${getAvatarColor(app.displayName)}`}>
+            {getInitial(app.displayName)}
           </AvatarFallback>
         </Avatar>
 

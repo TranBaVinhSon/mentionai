@@ -6,6 +6,7 @@ import { ChatMessage, ToolResult } from "./chat-message";
 import clsx from "clsx";
 import { MentionHighlight } from "@/components/mention-highlight";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarColor } from "@/utils/avatar";
 import { Separator } from "../ui/separator";
 import { v4 as uuidv4 } from "uuid";
 import Image from "next/image";
@@ -68,7 +69,7 @@ export default function SharedChatView({
               {message.role === "user" ? (
                 <div className="flex not-prose items-start w-full">
                   <Avatar className="w-6 h-6 mr-4 mt-1 flex-shrink-0">
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarFallback className={`text-white text-xs font-medium ${getAvatarColor("User")}`}>U</AvatarFallback>
                   </Avatar>
                   <div className="flex-grow">
                     <div className="mb-2">

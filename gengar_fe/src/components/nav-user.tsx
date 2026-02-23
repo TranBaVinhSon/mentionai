@@ -23,6 +23,8 @@ import { useRouter } from "next/navigation";
 import { gengarApi, GengarSubscriptionPlan } from "@/services/api";
 import { useSubscriptionStore } from "@/store/subscription-state";
 import { useChatStore } from "@/store/chat";
+import { cn } from "@/lib/utils";
+import { getAvatarColor, getInitial } from "@/utils/avatar";
 import {
   MessageCircle as Comment01Icon,
   Monitor as ComputerIcon,
@@ -90,7 +92,9 @@ export function NavUser() {
                   src={session?.user?.image || ""}
                   alt={session?.user?.name || ""}
                 />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className={cn("rounded-lg text-white font-medium", getAvatarColor(session?.user?.name || session?.user?.email || "U"))}>
+                  {getInitial(session?.user?.name || session?.user?.email || "U")}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
@@ -116,7 +120,9 @@ export function NavUser() {
                     src={session?.user?.image || ""}
                     alt={session?.user?.name || ""}
                   />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className={cn("rounded-lg text-white font-medium", getAvatarColor(session?.user?.name || session?.user?.email || "U"))}>
+                    {getInitial(session?.user?.name || session?.user?.email || "U")}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
