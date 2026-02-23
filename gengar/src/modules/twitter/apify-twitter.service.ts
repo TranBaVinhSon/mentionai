@@ -156,6 +156,21 @@ export class ApifyTwitterService {
     }
   }
 
+  private async callApifyActor(input: Record<string, any>): Promise<any[]> {
+    const actorId = "apidojo~twitter-scraper-lite";
+    const response = await axios.post(
+      `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${this.apifyToken}`,
+      input,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        timeout: 300000, // 5 minute timeout
+      },
+    );
+    return Array.isArray(response.data) ? response.data : [];
+  }
+
   async scrapeTwitterProfile(username: string): Promise<ApifyTwitterResponse> {
     if (!this.apifyToken) {
       throw new Error("APIFY_API_TOKEN is required for Twitter scraping");
@@ -164,33 +179,31 @@ export class ApifyTwitterService {
     try {
       this.logger.log(`Starting Apify Twitter scrape for username: ${username}`);
 
-      // Use the Twitter Scraper Lite actor as shown in the OpenAPI spec
-      const actorId = "apidojo~twitter-scraper-lite";
+      // Use the Twitter Scraper Lite actor
+      // Primary approach: use startUrls with profile URL (more reliable than twitterHandles alone)
+      this.logger.log(`Attempt 1: Using startUrls + twitterHandles for ${username}`);
 
-      this.logger.log(`Using actor ID: ${actorId}`);
+      let results = await this.callApifyActor({
+        startUrls: [`https://x.com/${username}`],
+        twitterHandles: [username],
+        maxItems: this.MAX_TWEETS,
+        sort: "Latest",
+      });
 
-      // Use run-sync-get-dataset-items endpoint for immediate results
-      const response = await axios.post(
-        `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${this.apifyToken}`,
-        {
-          twitterHandles: [username], // Twitter handles to scrape (as per OpenAPI spec)
-          maxItems: this.MAX_TWEETS, // Maximum number of tweets
-          sort: "Latest", // Get latest tweets
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          timeout: 300000, // 5 minute timeout
-        },
-      );
+      this.logger.log(`Attempt 1 returned ${results.length} items`);
 
-      this.logger.log(`Apify sync run completed`);
+      // Fallback: use searchTerms with from:username query
+      if (results.length === 0) {
+        this.logger.warn(`No results with startUrls/twitterHandles for ${username}, retrying with searchTerms`);
 
-      // Get results directly from response - this endpoint returns dataset items
-      const results = Array.isArray(response.data) ? response.data : [];
+        results = await this.callApifyActor({
+          searchTerms: [`from:${username}`],
+          maxItems: this.MAX_TWEETS,
+          sort: "Latest",
+        });
 
-      this.logger.log(`Received ${results.length} items from Apify`);
+        this.logger.log(`Attempt 2 (searchTerms) returned ${results.length} items`);
+      }
 
       if (results.length === 0) {
         throw new Error(`No data found for Twitter username: ${username}`);
