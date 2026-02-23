@@ -1423,6 +1423,18 @@ Do not repeat identical queries unless you intentionally need a refresh. Refine 
             // This loop ensures the stream is fully consumed for multi-step processing
             if (chunk.type === "error") {
               this.logger.error(`[AI-SDK] Stream error: ${chunk.error}`);
+              // Stream the error to the client
+              try {
+                const errorChunk: ResponseChunk = {
+                  type: "text",
+                  content: `\n\n[Error: ${chunk.error || "An error occurred during response generation. Please try again."}]`,
+                  models: [tmpModel],
+                  conversationUniqueId: newConversationUniqueId,
+                };
+                res.write(`data: ${JSON.stringify(errorChunk)}\n\n`);
+              } catch (writeError) {
+                this.logger.error("Failed to stream inline error to client:", (writeError as any).stack);
+              }
             }
           }
         } catch (error) {
@@ -1430,6 +1442,22 @@ Do not repeat identical queries unless you intentionally need a refresh. Refine 
             error,
             conversationUniqueId,
           });
+
+          // Stream the error to the client so they see a meaningful message instead of silence
+          try {
+            const errorMessage =
+              error?.message || "An unexpected error occurred while generating the response.";
+            const errorChunk: ResponseChunk = {
+              type: "text",
+              content: `I'm sorry, I encountered an error while generating my response. Please try again. (${errorMessage})`,
+              models: [tmpModel],
+              conversationUniqueId: newConversationUniqueId,
+            };
+            res.write(`data: ${JSON.stringify(errorChunk)}\n\n`);
+          } catch (writeError) {
+            this.logger.error("Failed to stream error to client:", writeError.stack);
+          }
+
           this.rollbar.error(
             "Streaming error:",
             {

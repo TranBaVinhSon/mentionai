@@ -144,9 +144,9 @@ export function modelStringToLanguageModel(model: string): any {
   } else if (model === "claude-3-haiku") {
     return anthropic("claude-3-haiku-20240307");
   } else if (model === "claude-4-sonnet") {
-    return anthropic("claude-4-sonnet-20250514");
+    return anthropic("claude-sonnet-4-20250514");
   } else if (model === "claude-4-opus") {
-    return anthropic("claude-4-opus-20250514");
+    return anthropic("claude-opus-4-20250514");
   } else if (model === "claude-4.5-sonnet") {
     return anthropic("claude-sonnet-4-5-20250929");
   } else if (model === "claude-3-5-haiku") {
