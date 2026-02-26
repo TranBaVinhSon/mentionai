@@ -22,6 +22,7 @@ import { rollbarProvider } from "./config/rollbar.provider";
 import { MemoryModule } from "./modules/memory/memory.module";
 import { RetrievalModule } from "./modules/retrieval/retrieval.module";
 import { AppAnalyticsModule } from "./modules/app-analytics/app-analytics.module";
+import { HealthModule } from "./modules/health/health.module";
 
 const gengarDBHostname = process.env.GENGAR_DB_HOSTNAME;
 const gengarDBUsername = process.env.GENGAR_DB_USERNAME;
@@ -67,6 +68,7 @@ const commonModules = [
   MemoryModule,
   RetrievalModule,
   AppAnalyticsModule,
+  HealthModule,
 ];
 
 @Module({
