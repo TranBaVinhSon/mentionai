@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Between, MoreThanOrEqual, LessThanOrEqual, In } from "typeorm";
 import { App } from "src/db/entities/app.entity";
-import { Conversation, ConversationCategory } from "src/db/entities/conversation.entity";
+import { Conversation } from "src/db/entities/conversation.entity";
 import { Message } from "src/db/entities/message.entity";
 import { User } from "src/db/entities/user.entity";
 import { AnalyticsResponseDto } from "./dto/analytics-response.dto";

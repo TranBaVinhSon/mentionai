@@ -172,9 +172,9 @@ Extract a knowledge graph with the following rules:
 
     const { object } = await generateObject({
       model,
-      schema: knowledgeGraphSchema,
+      schema: knowledgeGraphSchema as any,
       prompt,
-    });
+    }) as { object: z.infer<typeof knowledgeGraphSchema> };
 
     await this.appRepository.update(app.id, { knowledgeGraph: object });
     this.logger.log(`Updated knowledge graph for app ${app.id} (${app.name}) - ${object.nodes.length} nodes, ${object.edges.length} edges`);

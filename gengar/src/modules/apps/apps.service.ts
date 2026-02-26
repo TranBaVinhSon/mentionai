@@ -2579,10 +2579,10 @@ Generate ${numberOfQuestions} interesting and engaging questions that users migh
 
     // Validate source filter if provided
     if (sourceFilter) {
-      const validSources = Object.values(SocialContentSource).filter(
+      const validSources: string[] = Object.values(SocialContentSource).filter(
         (s) => s !== SocialContentSource.GMAIL,
       );
-      if (!validSources.includes(sourceFilter as SocialContentSource)) {
+      if (!validSources.includes(sourceFilter)) {
         throw new BadRequestException(
           `Invalid source. Valid sources are: ${validSources.join(", ")}`,
         );
