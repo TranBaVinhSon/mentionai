@@ -33,6 +33,8 @@
     "command:generate-embeddings:gc": "node --expose-gc -r ts-node/register -r tsconfig-paths/register src/console.ts generate-embeddings",
     "command:generate-embeddings:prod": "./run-command.sh generate-embeddings",
     "command:generate-metadata:prod": "./run-command.sh generate-metadata",
+    "command:generate-about": "ts-node -r tsconfig-paths/register src/console.ts generate-about",
+    "command:generate-knowledge-graph": "ts-node -r tsconfig-paths/register src/console.ts generate-knowledge-graph",
     "command:reindex-linkedin-memories": "ts-node -r tsconfig-paths/register src/console.ts reindex-linkedin-memories",
     "command:reindex-linkedin-memories:gc": "node --expose-gc -r ts-node/register -r tsconfig-paths/register src/console.ts reindex-linkedin-memories",
     "heroku:generate-metadata": "node dist/src/console.js generate-metadata",

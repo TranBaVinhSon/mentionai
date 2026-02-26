@@ -14,7 +14,7 @@ import { LinkedInService } from "./services/linkedin.service";
 import { TwitterService } from "./services/twitter.service";
 import { RedditService } from "./services/reddit.service";
 import { SocialCredential, SocialNetworkType } from "src/db/entities/social-credential.entity";
-import { In } from "typeorm";
+import { In, Not } from "typeorm";
 import { SocialCredentialsRepository } from "src/db/repositories/social-credential.repository";
 import Exa from "exa-js";
 import { MemoryService } from "../memory/memory.service";
@@ -41,7 +41,7 @@ import { generateText, generateObject } from "ai";
 import { z } from "zod";
 import { modelStringToLanguageModel } from "../common/utils";
 import { UsersService } from "../users/users.service";
-import { GengarSubscriptionPlan } from "src/db/entities/user.entity";
+import { GengarSubscriptionPlan, FreePlanLimits } from "src/db/entities/user.entity";
 import { SocialCredentialsDto } from "./dto/social-credentials.dto";
 import { generateSocialContentDocId, generateAppLinkDocId } from "../common/utils";
 
@@ -2482,6 +2482,31 @@ Generate ${numberOfQuestions} interesting and engaging questions that users migh
   }
 
   /**
+   * Get knowledge graph data for a published app (public endpoint)
+   */
+  async getPublishedAppKnowledgeGraph(name: string): Promise<{
+    knowledgeGraph: {
+      nodes: Array<{ id: string; label: string; type: string; weight: number }>;
+      edges: Array<{ source: string; target: string; label: string }>;
+    } | null;
+  }> {
+    const app = await this.appRepository.findOne({
+      where: {
+        name: name,
+        isPublished: true,
+        isMe: true,
+      },
+      select: ["id", "knowledgeGraph"],
+    });
+
+    if (!app) {
+      throw new NotFoundException("Published app not found");
+    }
+
+    return { knowledgeGraph: app.knowledgeGraph ?? null };
+  }
+
+  /**
    * Get social content for a published app (public endpoint)
    */
   async getPublishedAppSocialContent(name: string, source: string): Promise<SocialContent[]> {
@@ -2522,6 +2547,97 @@ Generate ${numberOfQuestions} interesting and engaging questions that users migh
       // Keep content but don't expose sensitive metadata
       content: this.summarizeContentForPublic(content.content),
     }));
+  }
+
+  /**
+   * Get aggregated timeline of social content for a published app (public endpoint)
+   * Returns all social content across all sources EXCEPT Gmail, ordered by date
+   */
+  async getPublishedAppTimeline(
+    name: string,
+    page: number = 1,
+    limit: number = 20,
+    sourceFilter?: string,
+  ): Promise<{
+    items: any[];
+    total: number;
+    page: number;
+    limit: number;
+    hasMore: boolean;
+  }> {
+    const app = await this.appRepository.findOne({
+      where: {
+        name: name,
+        isPublished: true,
+        isMe: true,
+      },
+    });
+
+    if (!app) {
+      throw new NotFoundException("Published app not found");
+    }
+
+    // Validate source filter if provided
+    if (sourceFilter) {
+      const validSources = Object.values(SocialContentSource).filter(
+        (s) => s !== SocialContentSource.GMAIL,
+      );
+      if (!validSources.includes(sourceFilter as SocialContentSource)) {
+        throw new BadRequestException(
+          `Invalid source. Valid sources are: ${validSources.join(", ")}`,
+        );
+      }
+    }
+
+    // Build where conditions - exclude Gmail and email content types
+    const whereConditions: any = {
+      appId: app.id,
+      type: Not(SocialContentType.EMAIL),
+    };
+
+    if (sourceFilter) {
+      whereConditions.source = sourceFilter as SocialContentSource;
+    } else {
+      whereConditions.source = Not(SocialContentSource.GMAIL);
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await this.socialContentRepository.findAndCount({
+      where: whereConditions,
+      order: {
+        socialContentCreatedAt: { direction: "DESC", nulls: "LAST" },
+      },
+      select: [
+        "id",
+        "source",
+        "content",
+        "type",
+        "externalId",
+        "socialContentCreatedAt",
+        "metadata",
+        "createdAt",
+      ],
+      take: limit,
+      skip: skip,
+    });
+
+    return {
+      items: items.map((item) => ({
+        id: item.id,
+        source: item.source,
+        content: item.content,
+        type: item.type,
+        externalId: item.externalId,
+        socialContentCreatedAt: item.socialContentCreatedAt,
+        createdAt: item.createdAt,
+        metadata: item.metadata,
+      })),
+      total,
+      page,
+      limit,
+      hasMore: skip + items.length < total,
+    };
   }
 
   /**
@@ -4391,14 +4507,13 @@ Article URL: ${metadata?.link || ""}`;
       return { canAdd: true };
     }
 
-    // For free users, check if they already have a social integration
+    // For free users, check if they've reached the social integration limit
     const existingCredentials = await this.socialCredentialsRepository.find({ where: { userId } });
 
-    if (existingCredentials.length > 0) {
+    if (existingCredentials.length >= FreePlanLimits.maxSocialIntegrations) {
       return {
         canAdd: false,
-        error:
-          "Free plan users can only connect one social media account. Upgrade to Plus to connect multiple accounts.",
+        error: `Free plan users can connect up to ${FreePlanLimits.maxSocialIntegrations} social media accounts. Upgrade to Plus for unlimited connections.`,
       };
     }
 
@@ -4421,10 +4536,10 @@ Article URL: ${metadata?.link || ""}`;
     const currentLinksCount = existingApp?.appLinks?.length || 0;
     const totalLinksAfterAdd = currentLinksCount + newLinksCount;
 
-    if (totalLinksAfterAdd > 1) {
+    if (totalLinksAfterAdd > FreePlanLimits.maxLinks) {
       return {
         canAdd: false,
-        error: "Free plan users can only add one link. Upgrade to Plus to add unlimited links.",
+        error: `Free plan users can add up to ${FreePlanLimits.maxLinks} links. Upgrade to Plus for unlimited links.`,
       };
     }
 

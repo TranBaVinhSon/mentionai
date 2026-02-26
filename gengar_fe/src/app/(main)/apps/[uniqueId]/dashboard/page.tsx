@@ -16,20 +16,21 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getAvatarColor, getInitial } from "@/utils/avatar";
 import {
-  ArrowLeft,
   Globe,
   Eye,
   MessageSquare,
   Users,
   RefreshCw,
 } from "lucide-react";
-import Link from "next/link";
 import { AnalyticsOverview } from "@/components/analytics/analytics-overview";
 import { ConversationsTable } from "@/components/analytics/conversations-table";
 import { DateRangeFilter } from "@/components/analytics/date-range-filter";
 import { formatCountryDisplay } from "@/utils/country-mapping";
-import { UpgradeDialog } from "@/components/shared/upgrade-dialog";
 import { GengarSubscriptionPlan } from "@/services/api";
+import { BasicDashboard } from "@/components/analytics/basic-dashboard";
+import { EngagementMetrics } from "@/components/analytics/engagement-metrics";
+import { TopQuestions } from "@/components/analytics/top-questions";
+import { TopicBreakdown } from "@/components/analytics/topic-breakdown";
 
 export default function DashboardPage({
   params,
@@ -38,8 +39,7 @@ export default function DashboardPage({
 }) {
   const { status } = useSession();
   const router = useRouter();
-  const { data: userData } = useUser();
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const { data: userData, isLoading: isUserLoading } = useUser();
   const [dateRange, setDateRange] = useState<{
     startDate: Date;
     endDate: Date;
@@ -48,7 +48,12 @@ export default function DashboardPage({
     endDate: new Date(),
   });
 
-  // Use custom hook for all dashboard data
+  // Determine plan status - treat unknown as free to avoid leaking Plus features
+  const isPlusUser =
+    userData?.subscriptionPlan === GengarSubscriptionPlan.PLUS ||
+    userData?.subscriptionPlan === GengarSubscriptionPlan.PRO;
+
+  // Use custom hook for all dashboard data - only fetch Plus data when confirmed Plus user
   const {
     app,
     analytics,
@@ -57,17 +62,7 @@ export default function DashboardPage({
     loading,
     error,
     refreshData,
-  } = useDashboardData(params.uniqueId, dateRange);
-
-  // Check if user is on free plan
-  const isFreeUser = userData?.subscriptionPlan === GengarSubscriptionPlan.FREE;
-
-  // Show upgrade dialog for free users
-  useEffect(() => {
-    if (status === "authenticated" && isFreeUser) {
-      setShowUpgradeDialog(true);
-    }
-  }, [status, isFreeUser]);
+  } = useDashboardData(params.uniqueId, dateRange, isPlusUser);
 
   const handleDateRangeChange = (newRange: {
     startDate: Date;
@@ -77,12 +72,17 @@ export default function DashboardPage({
   };
 
   // Handle authentication redirect
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/");
+    }
+  }, [status, router]);
+
   if (status === "unauthenticated") {
-    router.push("/");
     return null;
   }
 
-  if (status === "loading" || loading) {
+  if (status === "loading" || isUserLoading || loading) {
     return (
       <div className="space-y-4">
         <div className="h-8 bg-primary/10 rounded animate-pulse"></div>
@@ -124,46 +124,28 @@ export default function DashboardPage({
     );
   }
 
-  // If user is free, show upgrade dialog and don't render dashboard content
-  if (isFreeUser) {
+  // If user is not Plus, show basic analytics dashboard
+  if (!isPlusUser) {
     return (
-      <>
-        <UpgradeDialog
-          open={showUpgradeDialog}
-          onOpenChange={setShowUpgradeDialog}
-          title="Upgrade to Plus to Access Analytics"
-          description="Advanced analytics and insights are available exclusively for Plus members. Upgrade now to unlock detailed metrics about your digital clone's performance."
-          features={[
-            "View detailed analytics and insights",
-            "Track page views and unique visitors",
-            "Analyze geographic distribution",
-            "Access conversation history",
-            "Unlimited links and social media integrations",
-          ]}
-        />
-        <div className="space-y-4 md:space-y-6 px-4 md:px-6 pb-6">
-          <Card>
-            <CardContent className="py-12">
-              <div className="text-center space-y-4">
-                <div className="mx-auto w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-4">
-                  <Eye className="w-8 h-8 text-primary-foreground" />
-                </div>
-                <h2 className="text-2xl font-bold">Analytics Dashboard</h2>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  Get detailed insights into your digital clone's performance
-                  with our advanced analytics dashboard.
-                </p>
-                <Button
-                  onClick={() => setShowUpgradeDialog(true)}
-                  className="mt-4"
-                >
-                  Upgrade to Plus
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="space-y-4 md:space-y-6 px-4 md:px-6 pb-6">
+        <div className="flex items-center space-x-3">
+          <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
+            <AvatarImage src={app?.logo} alt={app?.displayName || app?.name} />
+            <AvatarFallback className={`text-white font-medium ${getAvatarColor(app?.displayName || app?.name || "DC")}`}>
+              {getInitial(app?.displayName || app?.name || "DC")}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold">
+              {app?.displayName || app?.name}
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Analytics Dashboard
+            </p>
+          </div>
         </div>
-      </>
+        <BasicDashboard uniqueId={params.uniqueId} />
+      </div>
     );
   }
 
@@ -423,6 +405,19 @@ export default function DashboardPage({
           </CardContent>
         </Card>
       )}
+
+      {/* Engagement Metrics */}
+      <EngagementMetrics
+        uniqueId={params.uniqueId}
+        startDate={dateRange.startDate.toISOString()}
+        endDate={dateRange.endDate.toISOString()}
+      />
+
+      {/* Top Questions and Topic Breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <TopQuestions uniqueId={params.uniqueId} />
+        <TopicBreakdown uniqueId={params.uniqueId} />
+      </div>
 
       {/* Conversations Table */}
       {conversations && <ConversationsTable data={conversations} />}

@@ -52,6 +52,28 @@ export class AppsController {
     return await this.appsService.getPublishedAppAbout(name);
   }
 
+  @Get("/public/:name/knowledge-graph")
+  @Public()
+  async getPublishedAppKnowledgeGraph(@Param("name") name: string) {
+    return await this.appsService.getPublishedAppKnowledgeGraph(name);
+  }
+
+  @Get("/public/:name/timeline")
+  @Public()
+  async getPublishedAppTimeline(
+    @Param("name") name: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+    @Query("source") source?: string,
+  ) {
+    return await this.appsService.getPublishedAppTimeline(
+      name,
+      page ? parseInt(page, 10) : 1,
+      limit ? Math.min(parseInt(limit, 10), 50) : 20,
+      source || undefined,
+    );
+  }
+
   @Get("/public/:name")
   @Public()
   async getPublishedApp(@Param("name") name: string): Promise<AppResponseDto> {

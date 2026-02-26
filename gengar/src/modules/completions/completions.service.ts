@@ -30,7 +30,7 @@ import { delay, modelStringToLanguageModel } from "../common/utils";
 import { AuthenticatedRequest } from "../common/types";
 import { MessageRepository } from "src/db/repositories/message.repository";
 import { Message } from "src/db/entities/message.entity";
-import { GengarSubscriptionPlan } from "src/db/entities/user.entity";
+import { GengarSubscriptionPlan, FreePlanLimits } from "src/db/entities/user.entity";
 import { AVAILABLE_MODELS } from "src/config/constants";
 import { AppRepository } from "src/db/repositories/app.repository";
 import { App } from "src/db/entities/app.entity";
@@ -374,12 +374,15 @@ Do not repeat identical queries unless you intentionally need a refresh. Refine 
       return;
     }
 
-    // TODO:
     if (user?.subscriptionPlan === GengarSubscriptionPlan.FREE) {
-      // Free users can only use tier 1 models
+      // Free users: tier 1 unlimited + tier 2 with monthly limit (10/mo)
+      const tierTwoUsage = user.modelUsage?.textModelUsage?.tierTwo || 0;
       request.models = request.models.filter((modelName) => {
         const model = AVAILABLE_MODELS.find((m) => m.name === modelName);
-        return model && !model.isProModel;
+        if (!model) return false;
+        if (model.tier === 1) return true;
+        if (model.tier === 2) return tierTwoUsage < FreePlanLimits.maxTierTwoMessagesPerMonth;
+        return false; // Block tier 3 for free users
       });
     }
 
