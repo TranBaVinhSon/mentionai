@@ -47,6 +47,7 @@ resource "aws_ecs_task_definition" "app" {
     portMappings = [{
       containerPort = var.container_port
       protocol      = "tcp"
+      name          = var.project_name
     }]
 
     # Env vars injected from SSM Parameter Store
@@ -109,10 +110,11 @@ resource "aws_ecs_service" "app" {
     assign_public_ip = true # Public subnet — no NAT Gateway needed
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.app.arn
-    container_name   = var.project_name
-    container_port   = var.container_port
+  # Register with Cloud Map for API Gateway service discovery
+  service_registries {
+    registry_arn   = aws_service_discovery_service.app.arn
+    container_name = var.project_name
+    container_port = var.container_port
   }
 
   deployment_circuit_breaker {

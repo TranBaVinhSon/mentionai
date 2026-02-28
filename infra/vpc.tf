@@ -20,7 +20,7 @@ resource "aws_internet_gateway" "main" {
   tags   = { Name = "${var.project_name}-igw" }
 }
 
-# --- Public subnets (Fargate + ALB) ---
+# --- Public subnets (Fargate) ---
 # Fargate tasks get public IPs here — no NAT Gateway needed (saves ~$32/mo)
 resource "aws_subnet" "public" {
   count                   = 2
@@ -61,47 +61,16 @@ resource "aws_subnet" "private" {
 
 # --- Security Groups ---
 
-# ALB: allow HTTP/HTTPS from anywhere
-resource "aws_security_group" "alb" {
-  name_prefix = "${var.project_name}-alb-"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = { Name = "${var.project_name}-alb-sg" }
-
-  lifecycle { create_before_destroy = true }
-}
-
-# Fargate: allow traffic from ALB only
+# Fargate: allow traffic from API Gateway VPC Link + internet (for public IP)
 resource "aws_security_group" "ecs" {
   name_prefix = "${var.project_name}-ecs-"
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port       = var.container_port
-    to_port         = var.container_port
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
+    from_port   = var.container_port
+    to_port     = var.container_port
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
   egress {

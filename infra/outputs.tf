@@ -1,6 +1,6 @@
-output "alb_dns_name" {
-  description = "ALB DNS name — point your domain here"
-  value       = aws_lb.main.dns_name
+output "api_endpoint" {
+  description = "API Gateway endpoint URL — point your domain here"
+  value       = aws_apigatewayv2_api.main.api_endpoint
 }
 
 output "ecr_repository_url" {
