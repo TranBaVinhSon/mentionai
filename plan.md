@@ -83,16 +83,29 @@ S3 (already exists)
 
 ---
 
+## Infrastructure Scripts (AWS CLI)
+
+No Terraform — just shell scripts calling `aws` CLI directly.
+
+| Script | Purpose |
+|---|---|
+| `infra/setup.sh` | Create all AWS resources (idempotent, safe to re-run) |
+| `infra/teardown.sh` | Delete everything (prompts before each step) |
+| `infra/put-secrets.sh` | Populate SSM params from env vars |
+| `scripts/ecs-run.sh` | Run one-off commands (replaces `heroku run`) |
+
 ## Cutover Checklist
 
-1. `terraform apply` to create all AWS resources
-2. Push initial Docker image to ECR
-3. Populate SSM parameters (API keys, secrets)
-4. `pg_dump` from Heroku Postgres -> `pg_restore` into RDS
-5. Run `CREATE EXTENSION IF NOT EXISTS vector;` on RDS
-6. Run migrations via `scripts/ecs-run.sh`
-7. Point domain to API Gateway endpoint
-8. Update OAuth callback URLs, Stripe webhook URL, `FRONTEND_URL`
-9. Smoke test all endpoints
-10. Keep Heroku running 1-2 weeks as rollback
-11. Decommission Heroku
+1. `export DB_PASSWORD=... && ./infra/setup.sh` to create all AWS resources
+2. Wait for RDS: `aws rds wait db-instance-available --db-instance-identifier gengar-db`
+3. Populate secrets: `export OPENAI_API_KEY=... && ./infra/put-secrets.sh`
+4. Build and push Docker image to ECR
+5. `pg_dump` from Heroku Postgres -> `pg_restore` into RDS
+6. Run `CREATE EXTENSION IF NOT EXISTS vector;` on RDS
+7. Run migrations via `./scripts/ecs-run.sh`
+8. Point domain to API Gateway endpoint (printed by setup.sh)
+9. Update OAuth callback URLs, Stripe webhook URL, `FRONTEND_URL`
+10. Set GitHub secrets: `AWS_ROLE_ARN`, `ECS_SUBNET_IDS`, `ECS_SECURITY_GROUP_ID`
+11. Smoke test all endpoints
+12. Keep Heroku running 1-2 weeks as rollback
+13. Decommission Heroku
