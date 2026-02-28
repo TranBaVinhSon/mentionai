@@ -68,6 +68,15 @@ export class AppAnalyticsService {
     return { totalConversations, totalMessages };
   }
 
+  async getBasicAnalytics(uniqueId: string): Promise<{ totalConversations: number; totalMessages: number }> {
+    const app = await this.appRepository.findOne({ where: { uniqueId } });
+    if (!app) {
+      throw new NotFoundException("App not found");
+    }
+
+    return this.getConversationStats(app.id);
+  }
+
   async getConversations(
     uniqueId: string,
     startDate?: Date,
@@ -198,5 +207,160 @@ export class AppAnalyticsService {
       offset: offset || 0,
       conversations: conversationsWithMessages,
     };
+  }
+
+  /**
+   * Get top questions asked to the app (first user message in each conversation)
+   */
+  async getTopQuestions(
+    uniqueId: string,
+    limit: number = 10,
+  ): Promise<{ questions: Array<{ question: string; count: number }> }> {
+    const app = await this.appRepository.findOne({ where: { uniqueId } });
+    if (!app) {
+      throw new NotFoundException("App not found");
+    }
+
+    // Get the first user message from each conversation (the opening question)
+    const results = await this.messageRepository
+      .createQueryBuilder("message")
+      .select("message.content", "question")
+      .addSelect("COUNT(*)", "count")
+      .innerJoin("message.conversation", "conversation")
+      .where("conversation.appId = :appId", { appId: app.id })
+      .andWhere("message.role = :role", { role: "user" })
+      .andWhere(
+        "message.id = (SELECT MIN(m2.id) FROM messages m2 WHERE m2.\"conversationId\" = conversation.id AND m2.role = :role)",
+        { role: "user" },
+      )
+      .groupBy("message.content")
+      .orderBy("count", "DESC")
+      .limit(limit)
+      .getRawMany();
+
+    return {
+      questions: results.map((r) => ({
+        question: r.question,
+        count: parseInt(r.count),
+      })),
+    };
+  }
+
+  /**
+   * Get engagement metrics: avg messages per conversation, unique users, repeat visitor rate
+   */
+  async getEngagementMetrics(
+    uniqueId: string,
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<{
+    avgMessagesPerConversation: number;
+    uniqueUsers: number;
+    repeatVisitorRate: number;
+    totalConversations: number;
+  }> {
+    const app = await this.appRepository.findOne({ where: { uniqueId } });
+    if (!app) {
+      throw new NotFoundException("App not found");
+    }
+
+    const dateFilter = this.buildDateFilter(startDate, endDate);
+
+    // Run queries in parallel
+    const [avgResult, uniqueUsersResult, repeatUsersResult, totalConversations] = await Promise.all([
+      // Average messages per conversation
+      this.messageRepository
+        .createQueryBuilder("message")
+        .select("AVG(msg_count.count)", "avg")
+        .from((subQuery) => {
+          let qb = subQuery
+            .select("message.conversationId", "conversationId")
+            .addSelect("COUNT(message.id)", "count")
+            .from(Message, "message")
+            .innerJoin("message.conversation", "conversation")
+            .where("conversation.appId = :appId", { appId: app.id });
+          if (dateFilter.length > 0) {
+            qb = qb.andWhere(dateFilter[0], dateFilter[1]);
+          }
+          return qb.groupBy("message.conversationId");
+        }, "msg_count")
+        .getRawOne(),
+      // Unique users
+      this.conversationRepository
+        .createQueryBuilder("conversation")
+        .select("COUNT(DISTINCT conversation.userId)", "count")
+        .where("conversation.appId = :appId", { appId: app.id })
+        .andWhere("conversation.userId IS NOT NULL")
+        .getRawOne(),
+      // Users with more than 1 conversation (repeat visitors)
+      this.conversationRepository
+        .createQueryBuilder("conversation")
+        .select("COUNT(*)", "count")
+        .from((subQuery) => {
+          return subQuery
+            .select("conversation.userId", "userId")
+            .from(Conversation, "conversation")
+            .where("conversation.appId = :appId", { appId: app.id })
+            .andWhere("conversation.userId IS NOT NULL")
+            .groupBy("conversation.userId")
+            .having("COUNT(conversation.id) > 1");
+        }, "repeat_users")
+        .getRawOne(),
+      // Total conversations
+      this.conversationRepository.count({ where: { appId: app.id } }),
+    ]);
+
+    const uniqueUsers = parseInt(uniqueUsersResult?.count || "0");
+    const repeatUsers = parseInt(repeatUsersResult?.count || "0");
+
+    return {
+      avgMessagesPerConversation: parseFloat(avgResult?.avg || "0"),
+      uniqueUsers,
+      repeatVisitorRate: uniqueUsers > 0 ? repeatUsers / uniqueUsers : 0,
+      totalConversations,
+    };
+  }
+
+  /**
+   * Get topic breakdown based on ConversationCategory distribution
+   */
+  async getTopicBreakdown(
+    uniqueId: string,
+  ): Promise<{ topics: Array<{ category: string; count: number; percentage: number }> }> {
+    const app = await this.appRepository.findOne({ where: { uniqueId } });
+    if (!app) {
+      throw new NotFoundException("App not found");
+    }
+
+    const results = await this.conversationRepository
+      .createQueryBuilder("conversation")
+      .select("conversation.category", "category")
+      .addSelect("COUNT(*)", "count")
+      .where("conversation.appId = :appId", { appId: app.id })
+      .andWhere("conversation.category IS NOT NULL")
+      .groupBy("conversation.category")
+      .orderBy("count", "DESC")
+      .getRawMany();
+
+    const total = results.reduce((sum, r) => sum + parseInt(r.count), 0);
+
+    return {
+      topics: results.map((r) => ({
+        category: r.category,
+        count: parseInt(r.count),
+        percentage: total > 0 ? (parseInt(r.count) / total) * 100 : 0,
+      })),
+    };
+  }
+
+  private buildDateFilter(startDate?: Date, endDate?: Date): [string, any] | [] {
+    if (startDate && endDate) {
+      return ["conversation.createdAt BETWEEN :startDate AND :endDate", { startDate, endDate }];
+    } else if (startDate) {
+      return ["conversation.createdAt >= :startDate", { startDate }];
+    } else if (endDate) {
+      return ["conversation.createdAt <= :endDate", { endDate }];
+    }
+    return [];
   }
 }

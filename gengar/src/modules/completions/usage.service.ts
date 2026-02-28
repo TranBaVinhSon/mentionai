@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { User, ModelTierLimits } from "../../db/entities/user.entity";
+import { User, ModelTierLimits, FreePlanLimits, GengarSubscriptionPlan } from "../../db/entities/user.entity";
 import { AVAILABLE_MODELS } from "../../config/constants";
 import { ModelType } from "../models/dto/model.dto";
 import { Response } from "express";
@@ -56,11 +56,20 @@ export class UsageService {
     } else {
       // Assuming Text models are tiers 1, 2, or 3
       if (model.tier === 2) {
-        if (usage.textModelUsage.tierTwo >= ModelTierLimits.tierTwo) {
+        // Different limits for free vs Plus users
+        const tierTwoLimit =
+          user.subscriptionPlan === GengarSubscriptionPlan.FREE
+            ? FreePlanLimits.maxTierTwoMessagesPerMonth
+            : ModelTierLimits.tierTwo;
+        if (usage.textModelUsage.tierTwo >= tierTwoLimit) {
+          const upgradeHint =
+            user.subscriptionPlan === GengarSubscriptionPlan.FREE
+              ? " Upgrade to Plus for more advanced model access."
+              : " You can use the other models such as GPT-4o-mini instead.";
           if (!res.writableEnded) {
             res.write(
               `data: ${JSON.stringify({
-                error: `Monthly limit for Tier ${model.tier} models exceeded. Limit resets at the beginning of each month. You can use the other models such as GPT-4o-mini instead.`,
+                error: `Monthly limit for Tier ${model.tier} models exceeded (${tierTwoLimit} messages/month). Limit resets at the beginning of each month.${upgradeHint}`,
               })}
 
 `,

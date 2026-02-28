@@ -14,10 +14,16 @@ export const ModelTierLimits = {
   imageGeneration: 80,
 };
 
+export const FreePlanLimits = {
+  maxSocialIntegrations: 3,
+  maxLinks: 5,
+  maxTierTwoMessagesPerMonth: 10,
+};
+
 // Having a cron job to reset the usage at the beginning of the month
 // Plus plan: Generate upto 150 images per month
 // Plus plan: 30 messages on Tier 3 models, 300 messages on Tier 2 models, unlimited on Tier 1 models
-// Free plan: unlimited requests on Tier 1 models
+// Free plan: unlimited requests on Tier 1 models, 10 messages on Tier 2 models
 
 export interface ModelUsage {
   imageGenerationCount: number;

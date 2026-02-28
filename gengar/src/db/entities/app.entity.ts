@@ -85,6 +85,16 @@ export class App {
   @Column({ type: "text", nullable: true })
   about: string | null;
 
+  /**
+   * Knowledge graph data (nodes and edges) for the public profile.
+   * Generated via CLI and shown on the Knowledge Graph tab.
+   */
+  @Column({ type: "jsonb", nullable: true })
+  knowledgeGraph: {
+    nodes: Array<{ id: string; label: string; type: string; weight: number }>;
+    edges: Array<{ source: string; target: string; label: string }>;
+  } | null;
+
   @Column({ type: "enum", enum: AppCategory, nullable: true })
   category: AppCategory | null;
 
