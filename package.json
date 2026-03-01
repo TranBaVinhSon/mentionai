@@ -1,0 +1,28 @@
+{
+  "name": "mentionai",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "yarn@1.22.22",
+  "workspaces": {
+    "packages": [
+      "apps/*"
+    ]
+  },
+  "scripts": {
+    "dev": "yarn workspaces run dev",
+    "dev:backend": "yarn workspace @mentionai/backend start:dev",
+    "dev:frontend": "yarn workspace @mentionai/frontend dev",
+    "build": "yarn workspaces run build",
+    "build:backend": "yarn workspace @mentionai/backend build",
+    "build:frontend": "yarn workspace @mentionai/frontend build",
+    "start": "yarn workspaces run start",
+    "start:backend": "yarn workspace @mentionai/backend start:prod",
+    "start:frontend": "yarn workspace @mentionai/frontend start",
+    "lint": "yarn workspaces run lint",
+    "test": "yarn workspaces run test",
+    "clean": "rm -rf apps/*/node_modules apps/*/.next apps/*/dist node_modules"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

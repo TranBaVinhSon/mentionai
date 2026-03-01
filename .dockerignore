@@ -1,0 +1,50 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+**/dist
+.next
+**/build
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test files
+coverage
+**/coverage
+*.test.ts
+*.spec.ts
+**/__tests__
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Frontend (not needed for backend build)
+apps/frontend
+
+# Misc
+.DS_Store
+Thumbs.db
+*.tgz

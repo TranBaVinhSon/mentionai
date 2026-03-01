@@ -1,5 +1,5 @@
 {
-  "name": "gengar_fe",
+  "name": "@mentionai/frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {

@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'gengar/**'
+      - 'apps/backend/**'
 
 jobs:
   deploy:
@@ -22,7 +22,7 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          appdir: gengar
+          appdir: apps/backend
 
       - name: Run migrations
         run: heroku run --app ${{ secrets.HEROKU_APP_NAME }} yarn migration:run

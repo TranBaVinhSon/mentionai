@@ -10,14 +10,16 @@ MentionAI is an AI-powered platform for creating digital clones from social medi
 
 ```
 mentionai/
-├── gengar/              # Backend - NestJS API server
-├── gengar_fe/           # Frontend - Next.js web application
-├── .github/workflows/   # CI/CD for both projects
-└── CLAUDE.md            # This file (monorepo-level)
+├── apps/
+│   ├── backend/           # NestJS API server (@mentionai/backend)
+│   └── frontend/          # Next.js web application (@mentionai/frontend)
+├── .github/workflows/     # CI/CD for both projects
+├── package.json           # Root workspace config
+└── CLAUDE.md              # This file (monorepo-level)
 ```
 
-- **Backend (`gengar/`)**: NestJS 10 + TypeORM + PostgreSQL (pgvector). Deployed to Heroku.
-- **Frontend (`gengar_fe/`)**: Next.js 14 (App Router) + TypeScript + Tailwind CSS. Deployed to Vercel.
+- **Backend (`apps/backend/`)**: NestJS 10 + TypeORM + PostgreSQL (pgvector). Deployed to Heroku.
+- **Frontend (`apps/frontend/`)**: Next.js 14 (App Router) + TypeScript + Tailwind CSS. Deployed to Vercel.
 
 Each subdirectory has its own `CLAUDE.md` with project-specific guidance. Refer to those for detailed architecture and conventions.
 
@@ -26,9 +28,9 @@ Each subdirectory has its own `CLAUDE.md` with project-specific guidance. Refer 
 ### Backend
 
 ```bash
-cd gengar
+cd apps/backend
 docker-compose up gengar_db    # Start PostgreSQL with pgvector
-yarn install
+yarn install                   # Run from root
 yarn build
 yarn migration:run
 yarn start:dev                 # Runs on port 3000
@@ -37,9 +39,20 @@ yarn start:dev                 # Runs on port 3000
 ### Frontend
 
 ```bash
-cd gengar_fe
-yarn install
+cd apps/frontend
+yarn install                   # Run from root
 yarn dev                       # Runs on port 4000
+```
+
+### Root Commands
+
+```bash
+yarn dev:backend       # Start backend
+yarn dev:frontend      # Start frontend
+yarn build             # Build all
+yarn test              # Run tests
+yarn lint              # Lint all
+yarn clean             # Clean all node_modules, .next, dist
 ```
 
 ## CI/CD
@@ -48,9 +61,9 @@ GitHub Actions workflows are in `.github/workflows/`:
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `backend-ci.yml` | PR/push to `main` touching `gengar/**` | Lint, build, test |
-| `frontend-ci.yml` | PR/push to `main` touching `gengar_fe/**` | Lint, build |
-| `deploy-backend.yml` | Push to `main` touching `gengar/**` | Deploy to Heroku + run migrations |
+| `backend-ci.yml` | PR/push to `main` touching `apps/backend/**` | Lint, build, test |
+| `frontend-ci.yml` | PR/push to `main` touching `apps/frontend/**` | Lint, build |
+| `deploy-backend.yml` | Push to `main` touching `apps/backend/**` | Deploy to Heroku + run migrations |
 | `claude-code-review.yml` | PR opened/updated | Automated Claude code review |
 | `claude.yml` | `@claude` mentioned in issues/PRs | Interactive Claude assistance |
 
@@ -64,7 +77,7 @@ GitHub Actions workflows are in `.github/workflows/`:
 ### API Communication
 
 - Backend serves all APIs under `/internal/api/v1`
-- Frontend communicates via `gengarApi` client (`gengar_fe/src/services/api.ts`) using Axios
+- Frontend communicates via `gengarApi` client (`apps/frontend/src/services/api.ts`) using Axios
 - Authentication: Backend issues JWT tokens, frontend manages sessions via NextAuth.js
 
 ### Shared Integrations
@@ -76,13 +89,13 @@ GitHub Actions workflows are in `.github/workflows/`:
 
 ### Key Environment Variables
 
-Backend (`.env` in `gengar/`):
+Backend (`.env` in `apps/backend/`):
 - Database: `GENGAR_DB_HOSTNAME`, `GENGAR_DB_PORT`, `GENGAR_DB_USERNAME`, `GENGAR_DB_PASSWORD`, `GENGAR_DB_NAME`
 - AI: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `DEEPSEEK_API_KEY`
 - Auth: `JWT_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
 - Infra: `STRIPE_SECRET_KEY`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `FRONTEND_URL`
 
-Frontend (`.env` in `gengar_fe/`):
+Frontend (`.env` in `apps/frontend/`):
 - Auth: `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GITHUB_AUTH_SECRET`, `NEXTAUTH_SECRET`
 - Payment: `STRIPE_SECRET_KEY`
 
@@ -91,9 +104,9 @@ Frontend (`.env` in `gengar_fe/`):
 When making changes that span both frontend and backend:
 
 1. Start with the backend API changes (new endpoints, modified DTOs)
-2. Build the backend to verify (`cd gengar && yarn build`)
-3. Update the frontend API client (`gengar_fe/src/services/api.ts`)
-4. Add React Query hooks if needed (`gengar_fe/src/hooks/`)
+2. Build the backend to verify (`cd apps/backend && yarn build`)
+3. Update the frontend API client (`apps/frontend/src/services/api.ts`)
+4. Add React Query hooks if needed (`apps/frontend/src/hooks/`)
 5. Implement UI changes in components
 
 ## General Rules
