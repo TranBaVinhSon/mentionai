@@ -1,5 +1,16 @@
 # Dependencies
 node_modules/
+.pnp
+.pnp.js
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Lock files (using yarn)
+package-lock.json
 
 # Build outputs
 dist/
@@ -9,51 +20,61 @@ build/
 
 # Environment files
 .env
-.env.*
-!.env.example
-
-# OS files
-.DS_Store
-*.pem
-
-# Debug logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-*.log
+.env.local
+.env.*.local
 
 # IDE
 .idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Testing
 coverage/
+
+# Vercel
+.vercel
 
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# Yarn v4
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+# Misc
+*.pem
+dist-ssr
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Docker
-gengar/docker/postgres
+apps/backend/docker/postgres
 
 # Backend specific
-gengar/feature_flags.json
-gengar/.node-version
+apps/backend/feature_flags.json
+apps/backend/.node-version
 
 # Frontend specific
-gengar_fe/.vercel
-gengar_fe/src/services/generated/*
-gengar_fe/certificates
+apps/frontend/.vercel
+apps/frontend/src/services/generated/*
+apps/frontend/certificates
 
-# Byterover rules
+# AI coding rules
 .clinerules/byterover-rules.md
 .kilocode/rules/byterover-rules.md
 .roo/rules/byterover-rules.md
