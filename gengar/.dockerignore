@@ -1,0 +1,11 @@
+node_modules
+dist
+docker
+.env
+.env.*
+!.env.example
+.git
+.github
+coverage
+*.md
+test
