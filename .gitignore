@@ -63,16 +63,16 @@ dist-ssr
 *.sw?
 
 # Docker
-apps/backend/docker/postgres
+apps/gengar/docker/postgres
 
 # Backend specific
-apps/backend/feature_flags.json
-apps/backend/.node-version
+apps/gengar/feature_flags.json
+apps/gengar/.node-version
 
 # Frontend specific
-apps/frontend/.vercel
-apps/frontend/src/services/generated/*
-apps/frontend/certificates
+apps/gengar_fe/.vercel
+apps/gengar_fe/src/services/generated/*
+apps/gengar_fe/certificates
 
 # AI coding rules
 .clinerules/byterover-rules.md
