@@ -40,21 +40,24 @@ export interface QueryAnalysis {
   requiresPrivateInfo: boolean; // True for uncertainty tests (breakfast, private conversations)
 }
 
-// Schema with enum validation for intent, simpler types for others to avoid TS instantiation issues
+// Schema with enum validation for intent, with defaults and nullable fields
+// to prevent AI_NoObjectGeneratedError when the LLM returns unexpected shapes
 const queryAnalysisSchema = z.object({
-  intent: z.enum([
-    "factual_lookup",
-    "recent_events",
-    "historical_timeline",
-    "personality_query",
-    "opinion_query",
-    "content_search",
-    "analytics_query",
-    "casual_conversation",
-    "uncertainty_test",
-    "story_request",
-  ]),
-  entities: z.array(z.string()),
+  intent: z
+    .enum([
+      "factual_lookup",
+      "recent_events",
+      "historical_timeline",
+      "personality_query",
+      "opinion_query",
+      "content_search",
+      "analytics_query",
+      "casual_conversation",
+      "uncertainty_test",
+      "story_request",
+    ])
+    .default("casual_conversation"),
+  entities: z.array(z.string()).default([]),
   temporalConstraint: z
     .object({
       type: z.string(),
@@ -64,12 +67,12 @@ const queryAnalysisSchema = z.object({
     })
     .nullable()
     .optional(),
-  contentTypeFilter: z.array(z.string()),
-  sourceFilter: z.array(z.string()),
-  requiresAggregation: z.boolean(),
-  expectedAnswerType: z.string(),
-  confidenceRequired: z.string(),
-  requiresPrivateInfo: z.boolean(),
+  contentTypeFilter: z.array(z.string()).nullable().default([]),
+  sourceFilter: z.array(z.string()).nullable().default([]),
+  requiresAggregation: z.boolean().default(false),
+  expectedAnswerType: z.string().default("conversation"),
+  confidenceRequired: z.string().default("low"),
+  requiresPrivateInfo: z.boolean().default(false),
 });
 
 @Injectable()
@@ -183,7 +186,19 @@ Return valid JSON matching the schema.`,
         name: error.name,
         cause: error.cause,
       });
-      throw error;
+
+      // Return a safe default instead of crashing the entire retrieval pipeline
+      this.logger.warn(`[QueryClassifier] Falling back to default classification for query: "${query}"`);
+      return {
+        intent: QueryIntent.CASUAL_CONVERSATION,
+        entities: [],
+        requiresAggregation: false,
+        expectedAnswerType: "conversation",
+        confidenceRequired: "low",
+        requiresPrivateInfo: false,
+        contentTypeFilter: [],
+        sourceFilter: [],
+      };
     }
   }
 
