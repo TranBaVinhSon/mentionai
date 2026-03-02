@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/frontend/**'
+      - 'apps/gengar_fe/**'
       - '.github/workflows/frontend-ci.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'apps/frontend/**'
+      - 'apps/gengar_fe/**'
       - '.github/workflows/frontend-ci.yml'
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: apps/frontend
+        working-directory: apps/gengar_fe
 
     steps:
       - name: Checkout repository

@@ -42,7 +42,7 @@ docs
 !README.md
 
 # Frontend (not needed for backend build)
-apps/frontend
+apps/gengar_fe
 
 # Misc
 .DS_Store
