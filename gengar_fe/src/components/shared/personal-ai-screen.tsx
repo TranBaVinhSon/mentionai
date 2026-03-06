@@ -34,9 +34,12 @@ import {
   DEFAULT_SUGGESTED_QUESTIONS,
 } from "@/hooks/use-suggested-questions";
 import { TruncatedDescription } from "@/components/shared/truncated-description";
-import { UpgradeDialog } from "@/components/shared/upgrade-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MemoizedReactMarkdown } from "@/components/markdown";
 import { cn } from "@/lib/utils";
 import { getAvatarColor, getInitial } from "@/utils/avatar";
+import { TimelineTab } from "@/components/shared/personal-ai/timeline-tab";
+import { KnowledgeGraphTab } from "@/components/shared/personal-ai/knowledge-graph-tab";
 
 // Helper function to get social media URLs
 function getSocialMediaUrl(type: SocialNetworkType, username: string): string {
@@ -224,15 +227,9 @@ export const PersonalAIScreen = ({
     type: SocialNetworkType;
     username: string;
   } | null>(null);
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-
-  // Handle dashboard access with free plan restrictions
+  // Navigate to dashboard - all users can access basic analytics
   const handleDashboardClick = () => {
-    if (user?.subscriptionPlan !== GengarSubscriptionPlan.PLUS) {
-      setShowUpgradeDialog(true);
-    } else {
-      router.push(`/apps/${app.uniqueId}/dashboard`);
-    }
+    router.push(`/apps/${app.uniqueId}/dashboard`);
   };
 
   // Get app links (metadata now comes from database)
@@ -605,8 +602,8 @@ export const PersonalAIScreen = ({
                           Create your own AI digital twin - Free!
                         </h3>
                         <p className="text-xs text-muted-foreground">
-                          Start with one social connection and one link. Upgrade
-                          anytime for unlimited sources.
+                          Start with up to 3 social connections and 5 links.
+                          Upgrade anytime for unlimited sources.
                         </p>
                       </div>
                       <Button
@@ -629,8 +626,8 @@ export const PersonalAIScreen = ({
                         Create your own AI digital clone - Free!
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        Sign in to start building your digital clone with one
-                        social connection and link for free
+                        Sign in to start building your digital clone with up
+                        to 3 social connections and 5 links for free
                       </p>
                     </div>
                     <Button
@@ -646,130 +643,174 @@ export const PersonalAIScreen = ({
 
               <Separator className="my-4 md:my-6" />
 
-              {/* Connected sources */}
-              <div className="w-full mb-6 md:mb-8 not-prose">
-                <h3 className="text-base md:text-lg font-medium text-muted-foreground mb-3 md:mb-4">
-                  Connected sources
-                </h3>
+              {/* Profile Tabs */}
+              <Tabs defaultValue="about" className="w-full">
+                <TabsList className="w-full justify-start">
+                  <TabsTrigger value="about">About</TabsTrigger>
+                  <TabsTrigger value="sources">Sources</TabsTrigger>
+                  <TabsTrigger value="timeline">Timeline</TabsTrigger>
+                  <TabsTrigger value="graph">Graph</TabsTrigger>
+                </TabsList>
 
-                {/* Social Media Sources */}
-                {(isPublicView
-                  ? app?.socialSources
-                  : user?.app?.socialSources) &&
-                  (isPublicView ? app.socialSources : user?.app?.socialSources)!
-                    .length > 0 && (
-                    <div className="mb-6">
-                      {/* Always show content details with external link option */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
-                        {(isPublicView
-                          ? app.socialSources!
-                          : user?.app?.socialSources!
-                        ).map((source, i) => {
-                          const colors = getSocialNetworkColors(source.type);
-                          return (
-                            <div key={i} className="w-full">
-                              <Badge
-                                variant="outline"
-                                className="flex items-center gap-2 md:gap-3 px-3 py-2 md:px-4 md:py-3 transition-colors cursor-pointer w-full justify-between relative group min-h-[3rem] md:min-h-[3.5rem]"
-                                style={{
-                                  backgroundColor: colors.backgroundColor,
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.backgroundColor =
-                                    colors.hoverBackgroundColor;
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.backgroundColor =
-                                    colors.backgroundColor;
-                                }}
-                                onClick={() => {
-                                  setSelectedSource({
-                                    type: source.type,
-                                    username: source.username,
-                                  });
-                                }}
-                              >
-                                <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
-                                  <img
-                                    src={`/icons/${source.type.toLowerCase()}.svg`}
-                                    alt={source.type}
-                                    className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 dark:invert"
-                                  />
-                                  <div className="flex flex-col items-start min-w-0 flex-1">
-                                    <span className="text-xs md:text-sm font-medium text-foreground">
-                                      {getSocialNetworkDisplayName(source.type)}
-                                    </span>
-                                    <span className="text-xs md:text-sm text-muted-foreground truncate w-full">
-                                      @{source.username}
-                                    </span>
-                                  </div>
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-6 w-6 md:h-6 md:w-6 p-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-shrink-0"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    const url = getSocialMediaUrl(
-                                      source.type,
-                                      source.username
-                                    );
-                                    window.open(
-                                      url,
-                                      "_blank",
-                                      "noopener,noreferrer"
-                                    );
-                                  }}
-                                  aria-label={`Open ${getSocialNetworkDisplayName(
-                                    source.type
-                                  )} profile`}
-                                >
-                                  <ArrowRight className="h-3 w-3 md:h-3 md:w-3" />
-                                </Button>
-                              </Badge>
-                            </div>
-                          );
-                        })}
-                      </div>
+                {/* About Tab */}
+                <TabsContent value="about" className="mt-4">
+                  {app.about ? (
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <MemoizedReactMarkdown>
+                        {app.about}
+                      </MemoizedReactMarkdown>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">
+                      <p>No about content available yet.</p>
                     </div>
                   )}
 
-                {/* Web Links - Only show heading and content if there are links */}
-                {appLinks && appLinks.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-base md:text-lg font-medium text-muted-foreground mb-3 md:mb-4">
-                      Web Links
-                    </h3>
-                    <LinkSource
-                      links={appLinks.map((appLink) => ({
-                        link: appLink.link,
-                        metadata: appLink.metadata,
-                      }))}
+                  {/* Suggested questions */}
+                  <div className="mt-6">
+                    <DigitalCloneSuggestedQuestions
+                      displayName={app.displayName}
+                      questions={suggestedQuestions}
+                      isLoading={isLoadingQuestions}
+                      onQuestionClick={(question) => {
+                        emitter.emit(EventTypes.SET_EDITOR_CONTENT, question);
+                      }}
                     />
                   </div>
-                )}
+                </TabsContent>
 
-                {!(isPublicView ? app?.socialSources : user?.app?.socialSources)
-                  ?.length &&
-                  !appLinks?.length && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs md:text-sm px-3 py-2 text-muted-foreground hover:bg-accent transition-colors"
-                    >
-                      No sources connected yet
-                    </Badge>
-                  )}
-              </div>
+                {/* Sources Tab */}
+                <TabsContent value="sources" className="mt-4">
+                  <div className="w-full not-prose">
+                    {/* Social Media Sources */}
+                    {(isPublicView
+                      ? app?.socialSources
+                      : user?.app?.socialSources) &&
+                      (isPublicView ? app.socialSources : user?.app?.socialSources)!
+                        .length > 0 && (
+                        <div className="mb-6">
+                          <h3 className="text-base md:text-lg font-medium text-muted-foreground mb-3 md:mb-4">
+                            Connected sources
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
+                            {(isPublicView
+                              ? app.socialSources!
+                              : user?.app?.socialSources!
+                            ).map((source, i) => {
+                              const colors = getSocialNetworkColors(source.type);
+                              return (
+                                <div key={i} className="w-full">
+                                  <Badge
+                                    variant="outline"
+                                    className="flex items-center gap-2 md:gap-3 px-3 py-2 md:px-4 md:py-3 transition-colors cursor-pointer w-full justify-between relative group min-h-[3rem] md:min-h-[3.5rem]"
+                                    style={{
+                                      backgroundColor: colors.backgroundColor,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.backgroundColor =
+                                        colors.hoverBackgroundColor;
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.backgroundColor =
+                                        colors.backgroundColor;
+                                    }}
+                                    onClick={() => {
+                                      setSelectedSource({
+                                        type: source.type,
+                                        username: source.username,
+                                      });
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                                      <img
+                                        src={`/icons/${source.type.toLowerCase()}.svg`}
+                                        alt={source.type}
+                                        className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 dark:invert"
+                                      />
+                                      <div className="flex flex-col items-start min-w-0 flex-1">
+                                        <span className="text-xs md:text-sm font-medium text-foreground">
+                                          {getSocialNetworkDisplayName(source.type)}
+                                        </span>
+                                        <span className="text-xs md:text-sm text-muted-foreground truncate w-full">
+                                          @{source.username}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-6 w-6 md:h-6 md:w-6 p-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-shrink-0"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const url = getSocialMediaUrl(
+                                          source.type,
+                                          source.username
+                                        );
+                                        window.open(
+                                          url,
+                                          "_blank",
+                                          "noopener,noreferrer"
+                                        );
+                                      }}
+                                      aria-label={`Open ${getSocialNetworkDisplayName(
+                                        source.type
+                                      )} profile`}
+                                    >
+                                      <ArrowRight className="h-3 w-3 md:h-3 md:w-3" />
+                                    </Button>
+                                  </Badge>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
 
-              {/* Suggested questions */}
-              <DigitalCloneSuggestedQuestions
-                displayName={app.displayName}
-                questions={suggestedQuestions}
-                isLoading={isLoadingQuestions}
-                onQuestionClick={(question) => {
-                  emitter.emit(EventTypes.SET_EDITOR_CONTENT, question);
-                }}
-              />
+                    {/* Web Links */}
+                    {appLinks && appLinks.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-base md:text-lg font-medium text-muted-foreground mb-3 md:mb-4">
+                          Web Links
+                        </h3>
+                        <LinkSource
+                          links={appLinks.map((appLink) => ({
+                            link: appLink.link,
+                            metadata: appLink.metadata,
+                          }))}
+                        />
+                      </div>
+                    )}
+
+                    {!(isPublicView ? app?.socialSources : user?.app?.socialSources)
+                      ?.length &&
+                      !appLinks?.length && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs md:text-sm px-3 py-2 text-muted-foreground hover:bg-accent transition-colors"
+                        >
+                          No sources connected yet
+                        </Badge>
+                      )}
+                  </div>
+                </TabsContent>
+
+                {/* Timeline Tab */}
+                <TabsContent value="timeline" className="mt-4">
+                  <TimelineTab
+                    appName={app.name}
+                    availableSources={
+                      isPublicView
+                        ? app?.socialSources
+                        : user?.app?.socialSources
+                    }
+                  />
+                </TabsContent>
+
+                {/* Knowledge Graph Tab */}
+                <TabsContent value="graph" className="mt-4">
+                  <KnowledgeGraphTab appName={app.name} />
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </div>
@@ -879,19 +920,6 @@ export const PersonalAIScreen = ({
         />
       )}
 
-      {/* Upgrade Dialog for Free Plan Limitations */}
-      <UpgradeDialog
-        open={showUpgradeDialog}
-        onOpenChange={setShowUpgradeDialog}
-        title="Unlock Analytics Dashboard"
-        description="Access to advanced analytics is available with the Plus plan. See detailed insights about your digital clone's conversations and interactions."
-        features={[
-          "View conversation analytics and metrics",
-          "Track user engagement patterns",
-          "Monitor popular questions and topics",
-          "Export conversation data",
-        ]}
-      />
     </div>
   );
 };

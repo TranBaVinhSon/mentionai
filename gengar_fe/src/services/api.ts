@@ -89,6 +89,11 @@ export interface App {
     } | null;
   }[];
   socialSources?: SocialSource[];
+  about?: string | null;
+  knowledgeGraph?: {
+    nodes: Array<{ id: string; label: string; type: string; weight: number }>;
+    edges: Array<{ source: string; target: string; label: string }>;
+  } | null;
   isPublished?: boolean;
   suggestedQuestionsConfig?: {
     questions?: string[];
@@ -773,17 +778,18 @@ export class GengarApi {
     }
   };
 
+  private cleanAppName(name: string): string {
+    return name.startsWith("@") ? name.slice(1) : name;
+  }
+
   public getPublishedApp = async (
     name: string
   ): Promise<App & { instruction: string }> => {
     try {
-      // Ensure the name doesn't contain @ symbol
-      const cleanName = name.startsWith("@") ? name.slice(1) : name;
-      const url = `/internal/api/v1/apps/public/${cleanName}`;
-      console.log("API call URL:", url);
-      console.log("Original name parameter:", name);
-      console.log("Clean name parameter:", cleanName);
-      const response = await this.client.get(url);
+      const cleanName = this.cleanAppName(name);
+      const response = await this.client.get(
+        `/internal/api/v1/apps/public/${cleanName}`
+      );
       return response.data;
     } catch (error) {
       this.handleError(error as AxiosError);
@@ -796,10 +802,101 @@ export class GengarApi {
     source: string
   ): Promise<any> => {
     try {
-      // Ensure the name doesn't contain @ symbol
-      const cleanName = name.startsWith("@") ? name.slice(1) : name;
+      const cleanName = this.cleanAppName(name);
       const response = await this.client.get(
         `/internal/api/v1/apps/public/social/${cleanName}/${source}`
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+      throw error;
+    }
+  };
+
+  public getPublishedAppTimeline = async (
+    name: string,
+    page: number = 1,
+    limit: number = 20,
+    source?: string
+  ): Promise<{
+    items: Array<{
+      id: number;
+      source: string;
+      content: string;
+      type: string;
+      externalId: string;
+      socialContentCreatedAt: string | null;
+      createdAt: string;
+      metadata?: any;
+    }>;
+    total: number;
+    page: number;
+    limit: number;
+    hasMore: boolean;
+  }> => {
+    try {
+      const cleanName = this.cleanAppName(name);
+      const params = new URLSearchParams();
+      params.append("page", page.toString());
+      params.append("limit", limit.toString());
+      if (source) params.append("source", source);
+
+      const response = await this.client.get(
+        `/internal/api/v1/apps/public/${cleanName}/timeline?${params.toString()}`
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+      throw error;
+    }
+  };
+
+  public getPublishedAppAbout = async (
+    name: string
+  ): Promise<{ about: string | null }> => {
+    try {
+      const cleanName = this.cleanAppName(name);
+      const response = await this.client.get(
+        `/internal/api/v1/apps/public/${cleanName}/about`
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+      throw error;
+    }
+  };
+
+  public getPublishedAppKnowledgeGraph = async (
+    name: string
+  ): Promise<{
+    knowledgeGraph: {
+      nodes: Array<{
+        id: string;
+        label: string;
+        type: string;
+        weight: number;
+      }>;
+      edges: Array<{ source: string; target: string; label: string }>;
+    } | null;
+  }> => {
+    try {
+      const cleanName = this.cleanAppName(name);
+      const response = await this.client.get(
+        `/internal/api/v1/apps/public/${cleanName}/knowledge-graph`
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+      throw error;
+    }
+  };
+
+  public getAppBasicAnalytics = async (
+    uniqueId: string
+  ): Promise<{ totalConversations: number; totalMessages: number }> => {
+    try {
+      const response = await this.client.get(
+        `/internal/api/v1/apps/${uniqueId}/analytics/basic`
       );
       return response.data;
     } catch (error) {
@@ -818,8 +915,9 @@ export class GengarApi {
       if (startDate) params.append("startDate", startDate);
       if (endDate) params.append("endDate", endDate);
 
+      const query = params.toString();
       const response = await this.client.get(
-        `/internal/api/v1/apps/${uniqueId}/analytics?${params.toString()}`
+        `/internal/api/v1/apps/${uniqueId}/analytics${query ? `?${query}` : ""}`
       );
       return response.data;
     } catch (error) {
@@ -842,8 +940,68 @@ export class GengarApi {
       if (limit !== undefined) params.append("limit", limit.toString());
       if (offset !== undefined) params.append("offset", offset.toString());
 
+      const query = params.toString();
       const response = await this.client.get(
-        `/internal/api/v1/apps/${uniqueId}/analytics/conversations?${params.toString()}`
+        `/internal/api/v1/apps/${uniqueId}/analytics/conversations${query ? `?${query}` : ""}`
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+      throw error;
+    }
+  };
+
+  public getAppEngagementMetrics = async (
+    uniqueId: string,
+    startDate?: string,
+    endDate?: string
+  ): Promise<{
+    avgMessagesPerConversation: number;
+    uniqueUsers: number;
+    repeatVisitorRate: number;
+    totalConversations: number;
+  }> => {
+    try {
+      const params = new URLSearchParams();
+      if (startDate) params.append("startDate", startDate);
+      if (endDate) params.append("endDate", endDate);
+
+      const query = params.toString();
+      const response = await this.client.get(
+        `/internal/api/v1/apps/${uniqueId}/analytics/engagement${query ? `?${query}` : ""}`
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+      throw error;
+    }
+  };
+
+  public getAppTopQuestions = async (
+    uniqueId: string,
+    limit: number = 10
+  ): Promise<{
+    questions: Array<{ question: string; count: number }>;
+  }> => {
+    try {
+      const response = await this.client.get(
+        `/internal/api/v1/apps/${uniqueId}/analytics/top-questions?limit=${limit}`
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError);
+      throw error;
+    }
+  };
+
+  public getAppTopicBreakdown = async (
+    uniqueId: string
+  ): Promise<{
+    topics: Array<{ category: string; count: number; percentage: number }>;
+  }> => {
+    try {
+      const response = await this.client.get(
+        `/internal/api/v1/apps/${uniqueId}/analytics/topics`
       );
       return response.data;
     } catch (error) {

@@ -29,7 +29,7 @@ export const PRICING_PLANS: Record<GengarSubscriptionPlan, PricingPlan> = {
     plan: GengarSubscriptionPlan.FREE,
     title: "Free",
     description:
-      "Start your digital mind. Access core AI models and begin training from one social account and one content link.",
+      "Start your digital mind. Access core AI models and begin training from up to 3 social accounts and 5 content links.",
     price: 0,
     footerText: "Login is required to activate all features",
   },
@@ -57,8 +57,14 @@ export const FREE_FEATURES: PricingFeature[] = [
     tooltip: "GPT-4o-mini, Gemini flash, Claude Haiku...etc",
   },
   {
+    text: "10 messages/month on advanced models",
+    tooltip: "Access GPT-4o, Claude Sonnet, Gemini Pro with 10 messages per month",
+    isNew: true,
+  },
+  {
     text: "Start your digital mind",
-    tooltip: "Train from one social account and one content link",
+    tooltip:
+      "Train from up to 3 social accounts and 5 content links",
   },
 ];
 

@@ -68,27 +68,28 @@ export function useAppData(uniqueId: string) {
 export function useAnalyticsData(
   uniqueId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
+  isPlusUser: boolean = true,
 ) {
   const { status } = useSession();
 
   return useQuery({
     queryKey: ["analytics", uniqueId, startDate, endDate],
     queryFn: () => gengarApi.getAppAnalytics(uniqueId, startDate, endDate),
-    enabled: status === "authenticated",
+    enabled: status === "authenticated" && isPlusUser,
   });
 }
 
 /**
  * Hook for fetching conversations data
  */
-export function useConversationsData(uniqueId: string) {
+export function useConversationsData(uniqueId: string, isPlusUser: boolean = true) {
   const { status } = useSession();
 
   return useQuery({
     queryKey: ["conversations", uniqueId],
     queryFn: () => gengarApi.getAppConversations(uniqueId),
-    enabled: status === "authenticated",
+    enabled: status === "authenticated" && isPlusUser,
   });
 }
 
@@ -140,7 +141,8 @@ export function useMergedAnalytics(
  */
 export function useDashboardData(
   uniqueId: string,
-  dateRange: { startDate: Date; endDate: Date }
+  dateRange: { startDate: Date; endDate: Date },
+  isPlusUser: boolean = false,
 ) {
   const queryClient = useQueryClient();
 
@@ -148,10 +150,10 @@ export function useDashboardData(
   const startDateStr = dateRange.startDate.toISOString().split("T")[0];
   const endDateStr = dateRange.endDate.toISOString().split("T")[0];
 
-  // Fetch data using individual hooks
+  // Fetch data using individual hooks - only fetch analytics/conversations for Plus users
   const appQuery = useAppData(uniqueId);
-  const analyticsQuery = useAnalyticsData(uniqueId, startDateStr, endDateStr);
-  const conversationsQuery = useConversationsData(uniqueId);
+  const analyticsQuery = useAnalyticsData(uniqueId, startDateStr, endDateStr, isPlusUser);
+  const conversationsQuery = useConversationsData(uniqueId, isPlusUser);
 
   // Merge the data
   const mergedAnalytics = useMergedAnalytics(

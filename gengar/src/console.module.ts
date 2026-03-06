@@ -11,12 +11,15 @@ import { GenerateMetadataCommand } from "./commands/generate-metadata.command";
 import { ReindexLinkedInMemoriesCommand } from "./commands/reindex-linkedin-memories.command";
 import { UpdateSuggestedQuestionsCommand } from "./commands/update-suggested-questions.command";
 import { SocialContent } from "./db/entities/social-content.entity";
+import { SocialCredential } from "./db/entities/social-credential.entity";
 import { AppLink } from "./db/entities/app-link.entity";
 import { App } from "./db/entities/app.entity";
 import { SocialContentRepository } from "./db/repositories/social-content.repository";
 import { EmbeddingsModule } from "./modules/embeddings/embeddings.module";
 import { ChromaModule } from "./modules/chroma/chroma.module";
 import { ReindexChromaCommand } from "./commands/reindex-chroma.command";
+import { GenerateAboutCommand } from "./commands/generate-about.command";
+import { GenerateKnowledgeGraphCommand } from "./commands/generate-knowledge-graph.command";
 import { AppLinkRepository } from "./db/repositories/app-link.repository";
 
 const gengarDBHostname = process.env.GENGAR_DB_HOSTNAME;
@@ -43,7 +46,7 @@ const gengarDBPort = process.env.GENGAR_DB_PORT;
       entities: [__dirname + "/db/entities/*.entity{.ts,.js}"],
       migrations: [],
     }),
-    TypeOrmModule.forFeature([SocialContent, AppLink, App]),
+    TypeOrmModule.forFeature([SocialContent, AppLink, App, SocialCredential]),
     AppsModule,
     MemoryModule,
     EmbeddingsModule,
@@ -58,6 +61,8 @@ const gengarDBPort = process.env.GENGAR_DB_PORT;
     ReindexLinkedInMemoriesCommand,
     UpdateSuggestedQuestionsCommand,
     ReindexChromaCommand,
+    GenerateAboutCommand,
+    GenerateKnowledgeGraphCommand,
   ],
 })
 export class ConsoleModule {}
