@@ -6,6 +6,10 @@
   "workspaces": {
     "packages": [
       "apps/*"
+    ],
+    "nohoist": [
+      "**/typeorm",
+      "**/typeorm/**"
     ]
   },
   "scripts": {
